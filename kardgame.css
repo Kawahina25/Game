@@ -1,0 +1,665 @@
+/* kardgame.css */
+
+body {
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* 垂直方向の中央揃えを追加 */
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 10px; /* 全体のパディングを調整 */
+    min-height: 100vh; /* 画面いっぱいに広げる */
+    box-sizing: border-box; /* paddingをwidth/heightに含める */
+    overflow: hidden; /* 画面サイズを超えるスクロールを防止 */
+}
+
+.game-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    max-width: 90vw; /* ビューポート幅の90%を最大幅に */
+    max-height: 90vh; /* ビューポート高さの90%を最大高さに */
+    width: 100%; /* 小さい画面では幅いっぱいに */
+    height: 100%; /* 高さいっぱいに（flexアイテムとして） */
+    aspect-ratio: 4/3; /* アスペクト比を維持しようと試みる (コンテンツによっては崩れる可能性あり) */
+    position: relative; /* 子要素のposition: absoluteの基準 */
+    display: flex; /* flexboxでコンテンツを中央に配置しやすく */
+    flex-direction: column;
+    justify-content: space-between; /* コンテンツを上下に分散 */
+    align-items: center; /* 水平方向中央 */
+    box-sizing: border-box; /* paddingをwidth/heightに含める */
+    overflow: auto; /* コンテンツが溢れた場合にスクロールバーを表示 */
+}
+
+/* オーバーレイ */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* 半透明の黒 */
+    z-index: 9; /* 他のコンテンツの上に表示 */
+    display: none; /* 初期状態では非表示 */
+}
+
+/* 各種ポップアップの共通スタイル */
+.card-info-popup,
+.confirm-quit-popup,
+.round-notification,
+.result-screen {
+    position: absolute; /* game-container内での絶対配置 */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    text-align: center;
+    z-index: 10; /* オーバーレイより上に表示 */
+    display: none; /* 初期状態では非表示 */
+    max-width: 90%; /* ポップアップもレスポンシブに */
+    max-height: 90%;
+    overflow-y: auto; /* ポップアップ内のコンテンツが溢れた場合にスクロール */
+}
+
+.card-info-popup {
+    text-align: left;
+}
+
+.round-notification {
+    background-color: rgba(0,0,0,0.8);
+    color: white;
+    padding: 20px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* ゲーム設定画面の共通スタイル */
+#gameSettings {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px; /* セクション間のスペース */
+    width: 100%;
+    padding: 20px;
+}
+
+.setting-section {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.setting-section h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #555;
+    font-size: 1.1em;
+    border-bottom: 1px dashed #ccc;
+    padding-bottom: 5px;
+}
+
+.hp-selector,
+.hand-size-selector {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap; /* 小さい画面で折り返す */
+    gap: 10px;
+    width: 100%; /* 親要素の幅いっぱいに */
+}
+
+.hp-option,
+.hand-size-option {
+    padding: 8px 15px;
+    border: 2px solid #333;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+    flex-grow: 1; /* flex item が均等に広がる */
+    max-width: 120px; /* 最大幅を設定して大きくなりすぎないように */
+    text-align: center;
+}
+
+.hp-option:hover,
+.hand-size-option:hover {
+    background-color: #f0f0f0;
+}
+
+.hp-option.selected,
+.hand-size-option.selected {
+    background-color: #4CAF50;
+    color: white;
+    border-color: #4CAF50;
+}
+
+/* カード種類ON/OFFトグル */
+.card-type-toggles {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* 左寄せ */
+    gap: 10px;
+    padding: 0 20px; /* 左右にパディング */
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    margin-right: 15px; /* ラベルとの間隔 */
+    vertical-align: middle; /* テキストと揃える */
+    cursor: pointer;
+    line-height: 34px; /* テキストの垂直中央揃え用 */
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: #4CAF50;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #4CAF50;
+}
+
+input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+.toggle-switch label { /* ラベルのテキストを調整 */
+    margin-left: 70px; /* トグルの幅+マージン */
+    display: inline-block;
+    vertical-align: middle;
+}
+
+
+/* ボタンの共通スタイル */
+.start-game-button,
+.show-cards-button,
+.close-popup-button,
+.quit-yes-button,
+.quit-no-button,
+.show-cards-in-game-button,
+.result-screen button {
+    display: block;
+    margin: 10px auto;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    transition: all 0.3s;
+    background-color: #4CAF50; /* デフォルトで緑 */
+    color: white;
+}
+
+.start-game-button:hover,
+.show-cards-button:hover,
+.close-popup-button:hover,
+.quit-yes-button:hover,
+.quit-no-button:hover,
+.show-cards-in-game-button:hover,
+.result-screen button:hover {
+    filter: brightness(1.1); /* ホバーで少し明るく */
+}
+
+.quit-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    padding: 8px 12px;
+    background-color: #f44336; /* 赤 */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: none; /* 初期状態では非表示 */
+    z-index: 1; /* ゲームエリアより前面 */
+    transition: background-color 0.3s;
+}
+.quit-button:hover {
+    background-color: #d32f2f; /* ホバーで濃い赤 */
+}
+
+
+/* 対戦終了確認ボタン */
+.quit-yes-button {
+    background-color: #f44336; /* 赤 */
+}
+.quit-no-button {
+    background-color: #4CAF50; /* 緑 */
+}
+.button-group {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+    gap: 15px; /* ボタン間のスペース */
+}
+
+/* ゲームエリア */
+#gameArea { /* IDセレクタに変更 */
+    display: none; /* 初期状態では非表示 */
+    width: 100%;
+    flex-grow: 1; /* 親要素の残りのスペースを占める */
+    display: flex; /* flexboxで内側の要素を配置 */
+    flex-direction: column;
+    justify-content: space-between; /* 上下均等に配置 */
+}
+
+.status {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    gap: 10px; /* プレイヤーと敵のステータス間のスペース */
+    width: 100%; /* 親要素の幅いっぱいに */
+}
+
+.player, .enemy {
+    text-align: center;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #eee;
+    width: 48%; /* 均等な幅を少し狭めてgapに対応 */
+    transition: background-color 0.3s;
+}
+
+.player.danger, .enemy.danger {
+    background-color: #ffcccc; /* HP低下時の背景色 */
+}
+
+.player.danger h3, .enemy.danger h3 {
+    color: #ff0000;
+    font-weight: bold;
+}
+
+.skull-icon {
+    display: none; /* 初期状態では非表示 */
+    margin-left: 5px;
+    font-size: 1.2em;
+    vertical-align: middle;
+}
+
+.cards {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap; /* カードが多すぎるときに折り返す */
+    margin: 20px 0;
+    min-height: 160px; /* カードがなくてもレイアウトを維持 */
+    flex-shrink: 0; /* カードエリアが縮まないように */
+    padding: 0 5px; /* カードが端に寄りすぎないように */
+}
+
+.card {
+    width: 100px;
+    height: 150px;
+    border: 2px solid #333;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background-color: #fff;
+    transition: all 0.2s;
+    position: relative;
+    font-size: 1.5em; /* カードの「？」のサイズ */
+    font-weight: bold;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.card.selected {
+    border-color: #4CAF50;
+    box-shadow: 0 0 10px #4CAF50;
+    transform: translateY(-8px);
+}
+
+.message {
+    text-align: center;
+    margin: 10px 0; /* マージンを調整 */
+    padding: 10px;
+    background-color: #e8f5e9;
+    border-radius: 5px;
+    transition: background-color 0.5s;
+    flex-shrink: 0; /* メッセージエリアが縮まないように */
+}
+
+/* ゲーム内でのカード情報ボタン */
+.show-cards-in-game-button {
+    font-size: 14px;
+    padding: 8px 16px;
+    margin-top: 10px; /* マージンを調整 */
+    margin-bottom: 0; /* 下のスペースをなくす */
+    flex-shrink: 0; /* ボタンエリアが縮まないように */
+}
+
+/* 現在のラウンド表示 */
+#currentRoundDisplay {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: rgba(0,0,0,0.7);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+/* 結果画面のスタイル */
+.result-screen {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    text-align: center;
+    max-width: 500px;
+    width: 90%; /* レスポンシブ対応 */
+    margin: 0 auto;
+}
+
+.result-screen h2 {
+    font-size: 32px;
+    margin-bottom: 20px;
+}
+
+.result-screen p {
+    font-size: 18px;
+    margin-bottom: 30px;
+}
+
+.result-screen #playAgainBtn {
+    background-color: #4CAF50; /* 緑 */
+    color: white;
+}
+
+.result-screen #changeHpBtn {
+    background-color: #2196F3; /* 青 */
+    color: white;
+}
+
+/* ゲームセット通知 */
+.game-set-notification {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0,0,0,0.8);
+    color: white;
+    padding: 20px 40px;
+    border-radius: 10px;
+    font-size: 32px;
+    font-weight: bold;
+    z-index: 100;
+    display: none; /* 初期状態は非表示 */
+}
+
+/* カード情報ポップアップ内のスタイル */
+.card-info-popup .card-section {
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.card-info-popup .card-section h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+/* レアリティごとのタイトル色 */
+.card-info-popup .card-section.normal h4 { border-color: #66bb6a; color: #388e3c; } /* 緑系 */
+.card-info-popup .card-section.bad h4 { border-color: #ef5350; color: #d32f2f; } /* 赤系 */
+.card-info-popup .card-section.rare h4 { border-color: #ffb300; color: #ffa000; } /* オレンジ系 */
+.card-info-popup .card-section.legendary h4 { border-color: #ffeb3b; color: #fbc02d; text-shadow: 0 0 5px rgba(255,255,0,0.5); } /* 金色系 */
+.card-info-popup .card-section.other h4 { border-color: #9e9e9e; color: #616161; } /* グレー系 */
+
+
+.card-info-popup .card-entry {
+    display: flex;
+    align-items: flex-start; /* アイコンとテキストの先頭を合わせる */
+    margin-bottom: 8px;
+    padding-bottom: 5px;
+    border-bottom: 1px dashed #eee; /* 各カードエントリの下線 */
+}
+
+.card-info-popup .card-entry:last-child {
+    border-bottom: none; /* 最後の要素は下線なし */
+}
+
+.card-info-popup .card-icon {
+    font-size: 1.2em;
+    margin-right: 8px;
+    width: 24px; /* アイコンの幅を固定して揃える */
+    text-align: center;
+    flex-shrink: 0; /* アイコンが縮まないように */
+}
+
+.card-info-popup .card-text {
+    flex-grow: 1;
+}
+
+.card-info-popup strong {
+    font-size: 1.1em;
+    margin-right: 5px;
+}
+
+/* レアリティごとのテキスト色 */
+.card-info-popup .normal-text { color: #2e7d32; }
+.card-info-popup .bad-text { color: #c62828; }
+.card-info-popup .rare-text { color: #f57f17; }
+.card-info-popup .legendary-text { color: #f9a825; font-weight: bold; }
+.card-info-popup .other-text { color: #424242; }
+
+
+/* ゲーム開始画面のスタイル */
+#startScreen {
+    display: flex; /* 初期表示はflex */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%; /* 親の高さに合わせる */
+    width: 100%;
+    text-align: center;
+}
+
+#startScreen h1 {
+    font-size: 3.5em; /* 大きなゲーム名 */
+    color: #333;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+#startScreen .subtitle {
+    font-size: 1.2em;
+    color: #666;
+    margin-bottom: 40px;
+}
+
+#startScreen .start-game-button,
+#startScreen .show-cards-button {
+    margin: 15px auto; /* ボタン間の余白 */
+    padding: 15px 30px;
+    font-size: 1.2em;
+    width: 80%; /* 幅を広めに */
+    max-width: 300px; /* 最大幅 */
+}
+
+
+/* レスポンシブデザイン */
+@media (max-width: 705px) {
+    .card {
+        width: 80px;
+        height: 120px;
+    }
+    .card-info-popup .card-entry {
+        flex-direction: column; /* スマホではアイコンとテキストを縦並びにする */
+        align-items: flex-start; /* 左寄せに戻す */
+    }
+    .card-info-popup .card-icon {
+        margin-right: 0;
+        margin-bottom: 5px;
+    }
+    #startScreen h1 {
+        font-size: 2.5em; /* スマホでのゲーム名 */
+    }
+    #startScreen .subtitle {
+        font-size: 1em;
+    }
+    #startScreen .start-game-button,
+    #startScreen .show-cards-button {
+        padding: 12px 25px;
+        font-size: 1em;
+    }
+    .hp-option,
+    .hand-size-option {
+        max-width: none; /* 小さい画面ではmax-widthを解除して均等に広がる */
+    }
+    .card-type-toggles {
+        align-items: center; /* 中央寄せに */
+        padding: 0; /* パディングをリセット */
+    }
+    .toggle-switch {
+        margin-right: 0;
+    }
+    .toggle-switch label {
+        margin-left: 0;
+        margin-top: 5px;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 5px; /* さらにパディングを減らす */
+    }
+    .game-container {
+        padding: 10px; /* さらにパディングを減らす */
+    }
+    .hp-option, .hand-size-option {
+        padding: 5px 8px;
+        font-size: 0.8em;
+    }
+    .start-game-button,
+    .show-cards-button,
+    .close-popup-button,
+    .quit-yes-button,
+    .quit-no-button,
+    .show-cards-in-game-button,
+    .result-screen button {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+    .quit-button {
+        top: 5px;
+        left: 5px;
+        padding: 5px 8px;
+        font-size: 10px;
+    }
+    .round-notification {
+        font-size: 18px;
+        padding: 10px;
+    }
+    .result-screen h2 {
+        font-size: 24px;
+    }
+    .result-screen p {
+        font-size: 14px;
+    }
+    .cards {
+        gap: 5px; /* カード間の間隔を狭める */
+        margin: 10px 0; /* マージンを調整 */
+    }
+    .card {
+        width: 70px; /* カードサイズをさらに小さく */
+        height: 105px;
+        font-size: 1.2em;
+    }
+    .card-info-popup .card-section h4 {
+        font-size: 1.1em;
+    }
+    .card-info-popup .card-entry strong {
+        font-size: 1em;
+    }
+    .card-info-popup p {
+        font-size: 0.9em;
+    }
+    #startScreen h1 {
+        font-size: 2em; /* さらに小さく */
+    }
+    #startScreen .subtitle {
+        font-size: 0.9em;
+    }
+    .toggle-switch {
+        width: 50px;
+        height: 28px;
+    }
+    .toggle-switch .slider:before {
+        height: 20px;
+        width: 20px;
+        left: 4px;
+        bottom: 4px;
+    }
+    input:checked + .slider:before {
+        -webkit-transform: translateX(20px);
+        -ms-transform: translateX(20px);
+        transform: translateX(20px);
+    }
+    .toggle-switch label {
+        font-size: 0.9em;
+    }
+}
