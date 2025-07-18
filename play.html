@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luck is the key - ゲーム中</title>
+    <!-- Google Fonts: Cinzel (タイトル用) と Noto Sans JP (本文用) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <!-- CSSファイルをリンク -->
+    <link rel="stylesheet" href="common.css"> <!-- 共通スタイルを読み込み -->
+    <link rel="stylesheet" href="play.css">    <!-- ゲーム画面専用スタイルを読み込み -->
+</head>
+<body>
+    <!-- ポップアップ表示時の背景オーバーレイ -->
+    <div id="overlay" class="overlay"></div>
+
+    <div class="game-container" id="gameContainer">
+        <!-- 対戦を終わらせるボタン -->
+        <button id="quitButton" class="quit-button">対戦を終わらせる</button>
+
+        <!-- ゲームエリア -->
+        <div id="gameArea" class="game-screen">
+            <!-- 現在のラウンド表示をゲームエリア内に移動 -->
+            <div id="currentRoundDisplay" class="round-display-in-game"></div>
+
+            <div class="status">
+                <div class="player">
+                    <h3>あなた</h3>
+                    <div class="hp-bar-container">
+                        <div id="playerHpBar" class="hp-bar"></div>
+                        <span id="playerHp" class="hp-text"></span><span id="playerSkull" class="skull-icon">☠</span>
+                    </div>
+                    <!-- 状態表示用のコンテナ -->
+                    <div class="status-effects-container" id="playerStatusEffects"></div>
+                </div>
+                <div class="enemy">
+                    <h3>ライバル</h3>
+                    <div class="hp-bar-container">
+                        <div id="enemyHpBar" class="hp-bar"></div>
+                        <span id="enemyHp" class="hp-text"></span><span id="enemySkull" class="skull-icon">☠</span>
+                    </div>
+                    <!-- 状態表示用のコンテナ -->
+                    <div class="status-effects-container" id="enemyStatusEffects"></div>
+                </div>
+            </div>
+            <div class="message" id="message">
+                あなたのターンです。カードを選んでください。
+            </div>
+            <div class="cards" id="cards"></div>
+            <button id="showCardsInGame" class="show-cards-in-game-button">カードの種類を確認</button>
+
+            <!-- スキルボタンコンテナ -->
+            <div id="skillButtonContainer" class="skill-button-container">
+                <button id="activeSkillButton" class="active-skill-button" style="display: none;">
+                    <span class="skill-icon"></span><span class="skill-name">スキル発動！</span><br> <!-- スキル名を「スキル発動！」に固定 -->
+                    <span class="skill-cooldown"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- スキル発動確認ポップアップ -->
+        <div id="skillConfirmPopup" class="confirm-popup">
+            <h3 class="popup-title" id="skillConfirmTitle">スキル名</h3>
+            <p id="skillConfirmDescription" class="skill-confirm-description">スキル効果</p>
+            <div class="button-group">
+                <button id="useSkillYes" class="quit-yes-button">使う</button>
+                <button id="useSkillNo" class="quit-no-button">使わない</button>
+            </div>
+        </div>
+
+        <!-- 対戦終了確認ポップアップ -->
+        <div id="confirmQuit" class="confirm-quit-popup">
+            <h3 class="popup-title">ほんとにやめていいのか？</h3>
+            <div class="button-group">
+                <button id="quitYes" class="quit-yes-button">YES</button>
+                <button id="quitNo" class="quit-no-button">NO</button>
+            </div>
+        </div>
+
+        <!-- ラウンド通知ポップアップ -->
+        <div id="roundNotification" class="round-notification">
+            <!-- JavaScriptでラウンド数が挿入されます -->
+        </div>
+
+        <!-- ゲームセット通知 -->
+        <div id="gameSetNotification" class="game-set-notification">
+            Game Set !
+        </div>
+
+        <!-- 結果画面 -->
+        <div id="resultScreen" class="result-screen"></div>
+    </div>
+
+    <!-- JavaScriptファイルをリンク (defer属性でHTMLの解析後に実行) -->
+    <script src="play.js" defer></script>
+</body>
+</html>

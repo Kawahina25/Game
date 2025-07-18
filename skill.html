@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luck is the key - スキル選択</title>
+    <!-- Google Fonts: Cinzel (タイトル用) と Noto Sans JP (本文用) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <!-- CSSファイルをリンク -->
+    <link rel="stylesheet" href="skill.css">
+</head>
+<body>
+    <!-- ポップアップ表示時の背景オーバーレイ -->
+    <div id="overlay" class="overlay"></div>
+
+    <div class="game-container" id="gameContainer">
+        <!-- スキル選択画面 -->
+        <div id="skillSelectScreen" class="game-screen">
+            <h2>スキル選択</h2>
+            <p class="skill-select-description">3つのスキルから1つを選んでゲームを開始しよう！</p>
+            <div id="skillOptions" class="skill-options-container">
+                <!-- スキルオプションはJavaScriptで動的に生成されます -->
+            </div>
+            <button id="showSkillInfoOnSelect" class="show-cards-button">スキル詳細を確認</button>
+        </div>
+
+        <!-- カード情報ポップアップ (スキル詳細にも流用) -->
+        <div id="cardInfo" class="card-info-popup">
+            <h3 class="popup-title">スキル詳細</h3>
+            <div id="cardInfoContent" class="card-info-content"></div>
+            <button id="closeCardInfo" class="close-popup-button">閉じる</button>
+        </div>
+
+        <!-- スキル選択確認ポップアップ -->
+        <div id="skillSelectionConfirmPopup" class="confirm-popup">
+            <h3 class="popup-title">このスキルでいいか？</h3>
+            <p id="selectedSkillInfo" class="skill-confirm-description">
+                <!-- 選択されたスキルの情報がJavaScriptでここに挿入されます -->
+            </p>
+            <div class="button-group">
+                <button id="confirmSkillSelectionYes" class="quit-yes-button">大丈夫だ</button>
+                <button id="confirmSkillSelectionNo" class="quit-no-button">全然だめだ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScriptファイルをリンク (defer属性でHTMLの解析後に実行) -->
+    <script src="skill.js" defer></script>
+</body>
+</html>

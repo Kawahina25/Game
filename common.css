@@ -1,0 +1,302 @@
+/* common.css */
+
+/* フォント定義 */
+body {
+    font-family: 'Noto Sans JP', sans-serif; /* 本文は読みやすい日本語フォント */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #1a1a1a; /* 暗い背景色 */
+    background-image: url('https://placehold.co/1920x1080/2b2b2b/ffffff/png?text=Dark+Stone+Texture'); /* 石のテクスチャ */
+    background-size: cover;
+    background-position: center;
+    color: #f0f0f0; /* 全体的に明るい文字色 */
+    margin: 0;
+    padding: 10px;
+    min-height: 100vh;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+h1, h2, h3, .popup-title {
+    font-family: 'Cinzel', serif; /* タイトルは戦闘的なフォント */
+    color: #e0e0e0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.game-container {
+    background-color: rgba(35, 35, 35, 0.9); /* 半透明の暗い背景 */
+    /* game-containerの背景画像は各画面のCSSで設定 */
+    padding: 25px;
+    border-radius: 15px;
+    border: 3px solid #555; /* 強調されたボーダー */
+    box-shadow: 0 0 20px rgba(0,0,0,0.8), inset 0 0 10px rgba(255,255,255,0.1); /* 強い影と内側の光 */
+    max-width: 98vw;
+    max-height: 95vh;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 4/3;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    overflow: auto;
+}
+
+/* オーバーレイ */
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* より濃い半透明の黒 */
+    z-index: 9;
+    display: none;
+}
+
+/* 各種ポップアップの共通スタイル */
+.card-info-popup,
+.confirm-quit-popup,
+.round-notification,
+.result-screen,
+.skill-confirm-popup,
+.skill-selection-confirm-popup {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(45, 45, 45, 0.95);
+    border: 2px solid #777;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.9);
+    text-align: center;
+    z-index: 99999; /* z-indexを非常に高く設定 */
+    display: none;
+    max-width: 98vw; /* 横幅を広げる */
+    max-height: 90%;
+    overflow-y: auto;
+    color: #e0e0e0;
+}
+/* スキル選択確認ポップアップに直接背景色を適用 */
+#skillSelectionConfirmPopup {
+    background-color: rgba(45, 45, 45, 0.98); /* わずかに濃い背景色 */
+    border: 5px solid #ff0000; /* 強調のための太い赤枠 */
+    width: 80%; /* 幅を明示的に設定 */
+    max-width: 500px; /* 最大幅を設定 */
+    min-height: 200px; /* 最低高さを設定 */
+    display: flex; /* flexboxでコンテンツを中央寄せ */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.card-info-popup {
+    text-align: left;
+}
+
+.round-notification {
+    background-color: rgba(50, 50, 50, 0.9);
+    color: #e0e0e0;
+    padding: 25px;
+    font-size: 2.5em;
+    font-weight: bold;
+    border: 3px solid #777;
+    border-radius: 10px;
+    text-shadow: 2px 2px 5px rgba(0,0,0,0.8);
+}
+
+/* ボタンの共通スタイル */
+.start-game-button,
+.show-cards-button,
+.close-popup-button,
+.quit-yes-button,
+.quit-no-button {
+    display: block;
+    margin: 15px auto;
+    padding: 12px 25px;
+    font-size: 1.1em;
+    cursor: pointer;
+    border: 2px solid #888;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    background: linear-gradient(to bottom, #5a5a5a, #3a3a3a);
+    color: #eee;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+    box-shadow: 3px 3px 8px rgba(0,0,0,0.6);
+}
+
+.start-game-button:hover,
+.show-cards-button:hover,
+.close-popup-button:hover,
+.quit-yes-button:hover,
+.quit-no-button:hover {
+    background: linear-gradient(to bottom, #6a6a6a, #4a4a4a);
+    transform: translateY(-2px);
+    box-shadow: 5px 5px 12px rgba(0,0,0,0.8);
+}
+
+.quit-button {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    padding: 10px 15px;
+    background: linear-gradient(to bottom, #d00, #900);
+    color: white;
+    border: 2px solid #ff5555;
+    border-radius: 8px;
+    cursor: pointer;
+    display: none;
+    z-index: 1;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+}
+.quit-button:hover {
+    background: linear-gradient(to bottom, #e00, #a00);
+    transform: translateY(-1px);
+    box-shadow: 3px 3px 8px rgba(0,0,0,0.7);
+}
+
+
+/* 対戦終了確認ボタン */
+.quit-yes-button {
+    background: linear-gradient(to bottom, #d00, #900);
+    border-color: #ff5555;
+}
+.quit-no-button {
+    background: linear-gradient(to bottom, #5a5a5a, #3a3a3a);
+    border-color: #888;
+}
+.button-group {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 30px;
+    gap: 20px;
+}
+
+/* カード情報ポップアップ内のスタイル */
+.card-info-popup .card-section {
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #666;
+    border-radius: 8px;
+    background-color: rgba(50, 50, 50, 0.8);
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+    color: #e0e0e0;
+}
+
+.card-info-popup .card-section h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid;
+    font-size: 1.3em;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+/* レアリティごとのタイトル色 */
+.card-info-popup .card-section.normal h4 { border-color: #6a6; color: #9c9; }
+.card-info-popup .card-section.bad h4 { border-color: #c00; color: #ff5555; }
+.card-info-popup .card-section.rare h4 { border-color: #d80; color: #ffaa00; }
+.card-info-popup .card-section.legendary h4 { border-color: #ffd700; color: #ffe080; text-shadow: 0 0 8px rgba(255,215,0,0.7); }
+.card-info-popup .card-section.other h4 { border-color: #999; color: #bbb; }
+
+
+.card-info-popup .card-entry {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    padding-bottom: 5px;
+    border-bottom: 1px dashed #555;
+}
+
+.card-info-popup .card-entry:last-child {
+    border-bottom: none;
+}
+
+.card-info-popup .card-icon {
+    font-size: 1.4em;
+    margin-right: 10px;
+    width: 30px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.card-info-popup .card-text {
+    flex-grow: 1;
+    font-size: 1.1em;
+}
+
+.card-info-popup strong {
+    font-size: 1.2em;
+    margin-right: 8px;
+}
+
+/* レアリティごとのテキスト色 */
+.card-info-popup .normal-text { color: #8f8; }
+.card-info-popup .bad-text { color: #f88; }
+.card-info-popup .rare-text { color: #ffc266; }
+.card-info-popup .legendary-text { color: #ffdb58; font-weight: bold; }
+.card-info-popup .other-text { color: #ccc; }
+
+
+/* レスポンシブデザイン - 共通部分 */
+@media (max-width: 705px) {
+    .card-info-popup .card-entry {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .card-info-popup .card-icon {
+        margin-right: 0;
+        margin-bottom: 5px;
+        font-size: 1.2em;
+        width: auto;
+    }
+    .card-info-popup .card-text {
+        font-size: 1em;
+    }
+    .card-info-popup strong {
+        font-size: 1.1em;
+    }
+    .quit-button {
+        top: 10px;
+        left: 10px;
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+    .skill-confirm-description {
+        font-size: 1em;
+    }
+}
+
+@media (max-width: 480px) {
+    .game-container {
+        padding: 15px;
+    }
+    .start-game-button,
+    .show-cards-button,
+    .close-popup-button {
+        padding: 10px 20px;
+        font-size: 0.9em;
+    }
+    .quit-button {
+        top: 5px;
+        left: 5px;
+        padding: 6px 10px;
+        font-size: 10px;
+    }
+    .card-info-popup .card-section h4 {
+        font-size: 1.1em;
+    }
+    .card-info-popup .card-entry strong {
+        font-size: 1em;
+    }
+    .card-info-popup p {
+        font-size: 0.8em;
+    }
+}

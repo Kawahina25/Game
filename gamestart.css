@@ -1,0 +1,275 @@
+/* gamestart.css */
+
+/* フォント定義 */
+body {
+    font-family: 'Noto Sans JP', sans-serif; /* 本文は読みやすい日本語フォント */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #1a1a1a; /* 暗い背景色 */
+    background-image: url('https://placehold.co/1920x1080/2b2b2b/ffffff/png?text=Dark+Stone+Texture'); /* 石のテクスチャ */
+    background-size: cover;
+    background-position: center;
+    color: #f0f0f0; /* 全体的に明るい文字色 */
+    margin: 0;
+    padding: 10px;
+    min-height: 100vh;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+h1, h2, h3, .popup-title {
+    font-family: 'Cinzel', serif; /* タイトルは戦闘的なフォント */
+    color: #e0e0e0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.game-container {
+    background-color: rgba(35, 35, 35, 0.9); /* 半透明の暗い背景 */
+    background-image: url('https://placehold.co/800x600/3a3a3a/3a3a3a/png'); /* テキストのない単色プレースホルダー画像 */
+    background-size: cover;
+    background-position: center;
+    padding: 25px;
+    border-radius: 15px;
+    border: 3px solid #555; /* 強調されたボーダー */
+    box-shadow: 0 0 20px rgba(0,0,0,0.8), inset 0 0 10px rgba(255,255,255,0.1); /* 強い影と内側の光 */
+    max-width: 98vw;
+    max-height: 95vh;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 4/3;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    overflow: auto;
+}
+
+/* オーバーレイ */
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* より濃い半透明の黒 */
+    z-index: 9;
+    display: none;
+}
+
+/* 各種ポップアップの共通スタイル */
+.card-info-popup {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(45, 45, 45, 0.95);
+    border: 2px solid #777;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.9);
+    text-align: center;
+    z-index: 99999; /* z-indexを非常に高く設定 */
+    display: none;
+    max-width: 98vw;
+    max-height: 90%;
+    overflow-y: auto;
+    color: #e0e0e0;
+}
+
+.card-info-popup {
+    text-align: left;
+}
+
+/* ボタンの共通スタイル */
+.start-game-button,
+.show-cards-button,
+.close-popup-button {
+    display: block;
+    margin: 15px auto;
+    padding: 12px 25px;
+    font-size: 1.1em;
+    cursor: pointer;
+    border: 2px solid #888;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    background: linear-gradient(to bottom, #5a5a5a, #3a3a3a);
+    color: #eee;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+    box-shadow: 3px 3px 8px rgba(0,0,0,0.6);
+}
+
+.start-game-button:hover,
+.show-cards-button:hover,
+.close-popup-button:hover {
+    background: linear-gradient(to bottom, #6a6a6a, #4a4a4a);
+    transform: translateY(-2px);
+    box-shadow: 5px 5px 12px rgba(0,0,0,0.8);
+}
+
+
+/* ゲーム開始画面のスタイル */
+#startScreen {
+    display: flex; /* JavaScriptで表示を制御 */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    text-align: center;
+}
+
+#startScreen h1 {
+    font-size: 4.5em;
+    color: #e0e0e0;
+    margin-bottom: 15px;
+    text-shadow: 4px 4px 8px rgba(0,0,0,0.8);
+}
+
+#startScreen .subtitle {
+    font-size: 1.4em;
+    color: #ccc;
+    margin-bottom: 50px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+#startScreen .start-game-button,
+#startScreen .show-cards-button {
+    margin: 20px auto;
+    padding: 18px 35px;
+    font-size: 1.3em;
+    width: 85%;
+    max-width: 350px;
+    border-color: #aaa;
+}
+
+/* カード情報ポップアップ内のスタイル */
+.card-info-popup .card-section {
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #666;
+    border-radius: 8px;
+    background-color: rgba(50, 50, 50, 0.8);
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+    color: #e0e0e0;
+}
+
+.card-info-popup .card-section h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid;
+    font-size: 1.3em;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+/* レアリティごとのタイトル色 */
+.card-info-popup .card-section.normal h4 { border-color: #6a6; color: #9c9; }
+.card-info-popup .card-section.bad h4 { border-color: #c00; color: #ff5555; }
+.card-info-popup .card-section.rare h4 { border-color: #d80; color: #ffaa00; }
+.card-info-popup .card-section.legendary h4 { border-color: #ffd700; color: #ffe080; text-shadow: 0 0 8px rgba(255,215,0,0.7); }
+.card-info-popup .card-section.other h4 { border-color: #999; color: #bbb; }
+
+
+.card-info-popup .card-entry {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    padding-bottom: 5px;
+    border-bottom: 1px dashed #555;
+}
+
+.card-info-popup .card-entry:last-child {
+    border-bottom: none;
+}
+
+.card-info-popup .card-icon {
+    font-size: 1.4em;
+    margin-right: 10px;
+    width: 30px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.card-info-popup .card-text {
+    flex-grow: 1;
+    font-size: 1.1em;
+}
+
+.card-info-popup strong {
+    font-size: 1.2em;
+    margin-right: 8px;
+}
+
+/* レアリティごとのテキスト色 */
+.card-info-popup .normal-text { color: #8f8; }
+.card-info-popup .bad-text { color: #f88; }
+.card-info-popup .rare-text { color: #ffc266; }
+.card-info-popup .legendary-text { color: #ffdb58; font-weight: bold; }
+.card-info-popup .other-text { color: #ccc; }
+
+
+/* レスポンシブデザイン */
+@media (max-width: 705px) {
+    #startScreen h1 {
+        font-size: 3em;
+    }
+    #startScreen .subtitle {
+        font-size: 1.1em;
+    }
+    #startScreen .start-game-button,
+    #startScreen .show-cards-button {
+        padding: 15px 30px;
+        font-size: 1.1em;
+    }
+    .card-info-popup .card-entry {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .card-info-popup .card-icon {
+        margin-right: 0;
+        margin-bottom: 5px;
+        font-size: 1.2em;
+        width: auto;
+    }
+    .card-info-popup .card-text {
+        font-size: 1em;
+    }
+    .card-info-popup strong {
+        font-size: 1.1em;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 5px;
+    }
+    .game-container {
+        padding: 15px;
+    }
+    .start-game-button,
+    .show-cards-button,
+    .close-popup-button {
+        padding: 10px 20px;
+        font-size: 0.9em;
+    }
+    .card-info-popup .card-section h4 {
+        font-size: 1.1em;
+    }
+    .card-info-popup .card-entry strong {
+        font-size: 1em;
+    }
+    .card-info-popup p {
+        font-size: 0.8em;
+    }
+    #startScreen h1 {
+        font-size: 2.5em;
+    }
+    #startScreen .subtitle {
+        font-size: 0.9em;
+    }
+}

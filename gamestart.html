@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luck is the key - スタート</title>
+    <!-- Google Fonts: Cinzel (タイトル用) と Noto Sans JP (本文用) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <!-- CSSファイルをリンク -->
+    <link rel="stylesheet" href="gamestart.css">
+</head>
+<body>
+    <div class="game-container" id="gameContainer">
+        <!-- ゲーム開始画面 -->
+        <div id="startScreen" class="game-screen">
+            <h1>Luck is the key</h1>
+            <p class="subtitle">―― Your choice shapes your destiny ――</p>
+            <button id="startNewGame" class="start-game-button">ゲーム開始</button>
+            <button id="showCardsOnStart" class="show-cards-button">カードの種類を確認</button>
+        </div>
+
+        <!-- カード情報ポップアップ (共通) -->
+        <div id="cardInfo" class="card-info-popup">
+            <h3 class="popup-title">カードの種類と効果</h3>
+            <div id="cardInfoContent" class="card-info-content"></div>
+            <button id="closeCardInfo" class="close-popup-button">閉じる</button>
+        </div>
+    </div>
+
+    <!-- JavaScriptファイルをリンク (defer属性でHTMLの解析後に実行) -->
+    <script src="gamestart.js" defer></script>
+</body>
+</html>
