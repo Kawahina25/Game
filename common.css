@@ -8,7 +8,7 @@ body {
     align-items: center;
     justify-content: center;
     background-color: #1a1a1a; /* 暗い背景色 */
-    background-image: url('https://placehold.co/1920x1080/2b2b2b/ffffff/png?text=Dark+Stone+Texture'); /* 石のテクスチャ */
+    background-image: url('https://placehold.co/1920x1080/2b2b2b/2b2b2b'); /* 背景色と文字色を同じにしてテキストを非表示に */
     background-size: cover;
     background-position: center;
     color: #f0f0f0; /* 全体的に明るい文字色 */
@@ -178,6 +178,32 @@ h1, h2, h3, .popup-title {
     gap: 20px;
 }
 
+/* 結果画面のスタイル (common.cssに移動) */
+.result-screen {
+    background-color: rgba(45, 45, 45, 0.95);
+    border: 2px solid #777;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.9);
+    text-align: center;
+    max-width: 98vw;
+    width: 90%;
+    margin: 0 auto;
+    color: #e0e0e0;
+}
+
+.result-screen h2 {
+    font-size: 3em;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 5px rgba(0,0,0,0.8);
+}
+
+.result-screen p {
+    font-size: 1.3em;
+    margin-bottom: 30px;
+}
+
+
 /* カード情報ポップアップ内のスタイル */
 .card-info-popup .card-section {
     margin-bottom: 20px;
@@ -272,6 +298,13 @@ h1, h2, h3, .popup-title {
     .skill-confirm-description {
         font-size: 1em;
     }
+    /* 結果画面のスタイル */
+    .result-screen h2 {
+        font-size: 2.5em;
+    }
+    .result-screen p {
+        font-size: 1.1em;
+    }
 }
 
 @media (max-width: 480px) {
@@ -298,5 +331,12 @@ h1, h2, h3, .popup-title {
     }
     .card-info-popup p {
         font-size: 0.8em;
+    }
+    /* 結果画面のスタイル */
+    .result-screen h2 {
+        font-size: 2em;
+    }
+    .result-screen p {
+        font-size: 0.9em;
     }
 }

@@ -56,6 +56,18 @@
                     <span class="skill-cooldown"></span>
                 </button>
             </div>
+
+            <!-- 記録ボタンコンテナ -->
+            <div id="recordButtonContainer" class="record-button-container">
+                <button id="showRecordButton" class="record-button">記録</button>
+            </div>
+        </div>
+
+        <!-- カード情報ポップアップ (共通) -->
+        <div id="cardInfo" class="card-info-popup">
+            <h3 class="popup-title">カードの種類と効果</h3>
+            <div id="cardInfoContent" class="card-info-content"></div>
+            <button id="closeCardInfo" class="close-popup-button">閉じる</button>
         </div>
 
         <!-- スキル発動確認ポップアップ -->
@@ -87,8 +99,14 @@
             Game Set !
         </div>
 
-        <!-- 結果画面 -->
-        <div id="resultScreen" class="result-screen"></div>
+        <!-- 記録ポップアップ -->
+        <div id="recordPopup" class="card-info-popup">
+            <h3 class="popup-title">カード使用履歴</h3>
+            <div id="recordContent" class="card-info-content">
+                <!-- 履歴はJavaScriptで動的に挿入されます -->
+            </div>
+            <button id="closeRecordPopup" class="close-popup-button">閉じる</button>
+        </div>
     </div>
 
     <!-- JavaScriptファイルをリンク (defer属性でHTMLの解析後に実行) -->

@@ -60,32 +60,32 @@ const allCards = [
         const targetElement = isPlayer ? document.querySelector('.player') : document.querySelector('.enemy');
         targetState.hp = gameState.maxHP;
         return "✨レジェンドカード✨ " + (isPlayer ? "あなたのHPが全回復しました！" : "ライバルのHPが全回復しました！");
-    }, count: 0, legendary: true, chance: 0.05, icon: '💖', type: 'legendary' },
+    }, count: 0, legendary: true, chance: 0.03, icon: '💖', type: 'legendary' },
     { name: "あべこべ", effect: "HP入れ替え", action: (isPlayer) => {
         const tempHP = gameState.player.hp;
         gameState.player.hp = gameState.enemy.hp;
         gameState.enemy.hp = tempHP;
         showBadCardEffect();
         return "あなたとライバルのHPが入れ替わりました！";
-    }, count: 1, isBad: true, icon: '🔄', type: 'bad', noReappearRounds: 2, reappearEffectName: "あべこべ" },
-    { name: "封じちゃえ ♪", effect: "行動を封じる", action: (isPlayer) => {
+    }, count: 1, isBad: true, icon: '🔄', type: 'bad', noReappearRounds: 2, reappearEffectName: "頭をぶつけてしまった" },
+    { name: "封じちゃえ ♪", effect: "相手の行動を2ターン封じる。あなたは追加で2回行動できる。", action: (isPlayer) => {
         const selfState = isPlayer ? gameState.player : gameState.enemy;
         const opponentState = isPlayer ? gameState.enemy : gameState.player;
         const selfElement = isPlayer ? playerStatusEffectsElement : enemyStatusEffectsElement;
         const opponentElement = isPlayer ? enemyStatusEffectsElement : playerStatusEffectsElement;
         const selfStatusId = isPlayer ? 'playerSealed' : 'enemySealed';
         const opponentStatusId = isPlayer ? 'enemySealed' : 'playerSealed';
-        opponentState.sealed = 2;
+        opponentState.sealed = 2; // 2ターン封じるように修正
         updateStatusDisplay(opponentElement, '🔒', 'red', opponentStatusId);
         selfState.extraTurns = 2;
         return "✨レジェンドカード✨ " + (isPlayer ? "ライバルの行動を2ターン封じました！あなたは追加で2回行動できます！" : "あなたの行動が2ターン封じられました！ライバルは追加で2回行動します！");
-    }, count: 0, legendary: true, chance: 0.02, icon: '🔒', type: 'legendary' },
+    }, count: 0, legendary: true, chance: 0.01, icon: '🔒', type: 'legendary' },
     { name: "一撃必殺", effect: "一撃必殺", action: (isPlayer) => {
         const targetState = isPlayer ? gameState.enemy : gameState.player;
         const targetElement = isPlayer ? document.querySelector('.enemy') : document.querySelector('.player');
         targetState.hp = 0;
         return "✨伝説のカード✨ 一撃必殺！" + (isPlayer ? "ライバルのHPが0になりました！" : "あなたのHPが0になりました！");
-    }, count: 0, legendary: true, chance: 0.003, icon: '🎯', type: 'legendary' },
+    }, count: 0, legendary: true, chance: 0.001, icon: '🎯', type: 'legendary' },
     { name: "神のご加護を", effect: "2ラウンド無敵", action: (isPlayer) => {
         const targetState = isPlayer ? gameState.player : gameState.enemy;
         const targetElement = isPlayer ? playerStatusEffectsElement : enemyStatusEffectsElement;
@@ -98,10 +98,10 @@ const allCards = [
 
 // 全てのスキルデータ (gamestart.js, gamesetting.js, skill.jsと共有)
 const allSkills = [
-    { 
-        name: "スキップ", 
+    {
+        name: "スキップ",
         icon: "💨",
-        effect: "次の相手のターン、60%の確率でカードの効果がなくなる。ただし、確率を外すと、自分がその効果を食らってしまう。", 
+        effect: "次の相手のターン、60%の確率でカードの効果がなくなる。ただし、確率を外すと、自分がその効果を食らってしまう。",
         action: (isPlayer) => {
             if (isPlayer) {
                 const success = Math.random() < 0.6;
@@ -116,10 +116,10 @@ const allSkills = [
             return "";
         }
     },
-    { 
-        name: "透視", 
+    {
+        name: "透視",
         icon: "🔮",
-        effect: "スキルを使うと、任意でカードを1枚選び、そのカードの効果が分かる。", 
+        effect: "スキルを使うと、任意でカードを1枚選び、そのカードの効果が分かる。",
         action: (isPlayer) => {
             if (isPlayer) {
                 const remainingCardNames = gameState.remainingCards.map(card => `「${card.name}」(${card.effect})`).join('、');
@@ -132,10 +132,10 @@ const allSkills = [
             return "";
         }
     },
-    { 
-        name: "慎重に", 
+    {
+        name: "慎重に",
         icon: "🐢",
-        effect: "3ターンの間、ハプニングカードの効果を受けない。", 
+        effect: "3ターンの間、ハプニングカードの効果を受けない。",
         action: (isPlayer) => {
             if (isPlayer) {
                 gameState.skillActiveEffects.immuneToBadCards = gameState.currentRound + 3;
@@ -145,10 +145,10 @@ const allSkills = [
             return "";
         }
     },
-    { 
-        name: "リスクandリターン", 
+    {
+        name: "リスクandリターン",
         icon: "🔥",
-        effect: "2ターンの間、攻撃する際に＋2の追加攻撃をする。ただし、受けるダメージも＋2される。", 
+        effect: "2ターンの間、攻撃する際に＋2の追加攻撃をする。ただし、受けるダメージも＋2される。",
         action: (isPlayer) => {
             if (isPlayer) {
                 gameState.skillActiveEffects.riskAndReturn = gameState.currentRound + 2;
@@ -158,10 +158,10 @@ const allSkills = [
             return "";
         }
     },
-    { 
-        name: "ご加護を", 
+    {
+        name: "ご加護を",
         icon: "✨",
-        effect: "回復系と防御系の効果が＋3される。ただし、スキルが終わると、3ターンの間、回復系と防御系の効果を受けれなくなる。", 
+        effect: "回復系と防御系の効果が＋3される。ただし、スキルが終わると、3ターンの間、回復系と防御系の効果を受けれなくなる。",
         action: (isPlayer) => {
             if (isPlayer) {
                 gameState.skillActiveEffects.divineBlessing = gameState.currentRound + 1;
@@ -218,7 +218,8 @@ let gameState = {
         divineBlessing: 0,
         divineBlessingDebuff: 0
     },
-    skillConfirmCallback: null
+    skillConfirmCallback: null,
+    playedCardsHistory: [] // カード使用履歴を保存する配列
 };
 
 // DOM要素の宣言 (DOMContentLoaded内で割り当てる)
@@ -233,11 +234,11 @@ let cardsContainer;
 let gameAreaScreen;
 let quitButton;
 let cardInfoPopup;
+let cardInfoContent; // グローバルで宣言し、DOMContentLoadedで割り当てる
 let confirmQuitPopup;
 let roundNotification;
 let overlay;
 let gameSetNotification;
-let resultScreen;
 let currentRoundDisplay;
 let playerHpBarElement;
 let enemyHpBarElement;
@@ -254,6 +255,13 @@ let skillConfirmTitle;
 let skillConfirmDescription;
 let useSkillYesButton;
 let useSkillNoButton;
+
+// 記録関連DOM要素 (play.html用)
+let showRecordButton;
+let recordPopup;
+let recordContent;
+let closeRecordPopupElement; // 変数名を変更して重複宣言を避ける
+
 
 // localStorageからgameStateをロードする関数
 function loadGameState() {
@@ -282,7 +290,7 @@ function saveGameState() {
     // selectedSkillのactionプロパティは保存しない（循環参照を防ぐため）
     const stateToSave = { ...gameState };
     if (stateToSave.selectedSkill) {
-        stateToSave.selectedSkill = { 
+        stateToSave.selectedSkill = {
             name: stateToSave.selectedSkill.name,
             icon: stateToSave.selectedSkill.icon,
             effect: stateToSave.selectedSkill.effect
@@ -310,8 +318,8 @@ function updateStatusDisplay(parent, emoji, color, id, fontWeight = 'normal') {
         statusElement.style.padding = '2px 5px';
         statusElement.style.fontSize = '1.2em';
 
-        if (parent) { 
-            parent.appendChild(statusElement); 
+        if (parent) {
+            parent.appendChild(statusElement);
             console.log(`Status element '${id}' created and appended to`, parent);
         } else {
             console.error(`Error: Parent element for status ID '${id}' is null. Cannot append child.`);
@@ -344,7 +352,7 @@ function updateHP() {
     } else {
         enemyElement.classList.remove('danger');
     }
-    
+
     if (gameState.player.hp <= 0) {
         playerHpElement.style.display = 'none';
         playerSkullElement.style.display = 'inline';
@@ -529,7 +537,7 @@ function updateRoundDisplay() {
 // カードをシャッフルし、手札を生成
 function shuffleCards() {
     let deck = [];
-    
+
     // 全てのカードをフィルタリング
     let availableCards = allCards.filter(card => {
         // カードON/OFF設定に基づいて除外
@@ -538,7 +546,7 @@ function shuffleCards() {
         // rareかつlegendaryではないカードは、rare設定がOFFなら除外
         if (card.rare && !card.legendary && !gameState.enableRareCards) return false;
 
-        // NEW: usedNoReappearCards に含まれるカードを現在のラウンドと比較して除外
+        // usedNoReappearCards に含まれるカードを現在のラウンドと比較して除外
         const usedEntry = gameState.usedNoReappearCards.find(entry => entry.name === card.name);
         if (usedEntry && gameState.currentRound < usedEntry.reappearRound) {
             return false; // 再出現指定ラウンドに達していない場合は除外
@@ -554,17 +562,16 @@ function shuffleCards() {
 
     let currentHand = [];
     let attempts = 0;
-    const maxAttempts = 200; 
+    const maxAttempts = 200;
 
     do {
         currentHand = []; // 手札をリセット
         let tempPossibleCards = [...availableCards]; // 抽選可能なカードを毎回リセット
-        
+
         // 必須カードの確保
-        let ensuredCards = [];
-        
+
         // 攻撃カードを2枚確保 (同じ種類が出てもOK)
-        // 攻撃カードプールからランダムに2枚選んで追加 (重複あり)
+        let ensuredCards = [];
         let addedAttackCardsCount = 0;
         const tempAttackPoolShuffled = [...attackCardsPool].sort(() => 0.5 - Math.random());
         for(let i = 0; i < tempAttackPoolShuffled.length && addedAttackCardsCount < 2; i++) {
@@ -573,7 +580,6 @@ function shuffleCards() {
         }
 
         // 防御/回復系カードを1枚確保
-        // enabled が false の場合、この条件はスキップされます
         if (defenseHealCardsPool.length > 0 && (gameState.enableHealCards || gameState.enableRareCards)) {
             const selectedDefenseHealCard = defenseHealCardsPool[Math.floor(Math.random() * defenseHealCardsPool.length)];
             ensuredCards.push(selectedDefenseHealCard);
@@ -595,7 +601,7 @@ function shuffleCards() {
 
         // 確保したカードを手札に追加（重複は避ける）
         // Setを使ってユニークなカードを確保。この時点ではまだ枚数を気にしない。
-        currentHand = Array.from(new Set(ensuredCards)); 
+        currentHand = Array.from(new Set(ensuredCards));
 
         // 残りの手札の枠を埋める
         while (currentHand.length < gameState.numCardsInHand) {
@@ -609,8 +615,9 @@ function shuffleCards() {
             // 追加したカードを次回の抽選から除外するために、tempPossibleCardsからも削除する
             tempPossibleCards = tempPossibleCards.filter(card => card !== availableForFiller[randomFillerIndex]);
         }
-        
+
         // レジェンドカードは確率で追加 (手札枚数を超過する可能性もあるが、ゲーム性として許容)
+        // ここで、レジェンドカードが選ばれたら必ず手札に追加し、手札枚数の上限を超えても許容する
         if (!gameState.usedLegendaryCards && legendaryCardsPool.length > 0) {
             const potentialLegendaryCard = legendaryCardsPool[Math.floor(Math.random() * legendaryCardsPool.length)];
             if (Math.random() < potentialLegendaryCard.chance) {
@@ -618,12 +625,26 @@ function shuffleCards() {
                 gameState.usedLegendaryCards = true; // 一度引いたらフラグを立てる
             }
         }
-        
+
         // 最終的な手札の枚数を保証（超過分は切り詰める）
         // numCardsInHandを超える場合は、ランダムに切り詰める
+        // レジェンドカードが選ばれた場合、そのカードは切り詰め対象から除外するように修正
         if (currentHand.length > gameState.numCardsInHand) {
-            currentHand = currentHand.sort(() => 0.5 - Math.random()).slice(0, gameState.numCardsInHand);
+            let legendaryCardInHand = currentHand.find(card => card.legendary);
+            let nonLegendaryCards = currentHand.filter(card => !card.legendary);
+
+            // 非レジェンドカードからランダムに削除して枚数を調整
+            while (nonLegendaryCards.length + (legendaryCardInHand ? 1 : 0) > gameState.numCardsInHand) {
+                if (nonLegendaryCards.length === 0) break; // 削除する非レジェンドカードがない場合
+                const randomIndex = Math.floor(Math.random() * nonLegendaryCards.length);
+                nonLegendaryCards.splice(randomIndex, 1);
+            }
+            currentHand = nonLegendaryCards;
+            if (legendaryCardInHand) {
+                currentHand.push(legendaryCardInHand);
+            }
         }
+
 
         // 条件チェック
         const attackCardsInHand = currentHand.filter(card => card.type === 'attack');
@@ -633,12 +654,17 @@ function shuffleCards() {
         // 攻撃カードは最低2枚以上
         const minAttackMet = attackCardsInHand.length >= 2;
         // 防御系or回復系が1枚 (設定が無効の場合は条件を無視)
-        const minDefenseHealMet = (!gameState.enableHealCards && !gameState.enableRareCards) || defenseHealCardsInHand.length >= 1; 
+        const minDefenseHealMet = (!gameState.enableHealCards && !gameState.enableRareCards) || defenseHealCardsInHand.length >= 1;
         // ハプニング系が1枚 (設定が無効の場合は条件を無視)
-        const minBadMet = !gameState.enableBadCards || badCardsInHand.length >= 1; 
+        const minBadMet = !gameState.enableBadCards || badCardsInHand.length >= 1;
 
-        if (minAttackMet && minDefenseHealMet && minBadMet && currentHand.length === gameState.numCardsInHand) { // NEW: 手札枚数も条件に含める
-            break; 
+        // レジェンドカードが出現した場合、手札枚数の条件を緩和する
+        const hasLegendary = currentHand.some(card => card.legendary);
+        const handSizeMet = hasLegendary ? true : currentHand.length === gameState.numCardsInHand;
+
+
+        if (minAttackMet && minDefenseHealMet && minBadMet && handSizeMet) {
+            break;
         }
 
         attempts++;
@@ -686,7 +712,7 @@ function playCard(index) {
     applyTurnStartEffects(true);
 
     // スキップスキルが発動している場合の処理
-    if (gameState.skillActiveEffects.skipNextEnemyTurn) { 
+    if (gameState.skillActiveEffects.skipNextEnemyTurn) {
         gameState.skillActiveEffects.skipNextEnemyTurn = false; // スキルを消費
         messageElement.innerHTML = `「スキップ」スキルが発動！相手の攻撃は無効化されました！`;
         updateHP();
@@ -702,7 +728,7 @@ function playCard(index) {
         if (gameState.player.sealed === 0) {
             updateStatusDisplay(playerStatusEffectsElement, '', 'red', 'playerSealed');
         }
-        messageElement.innerHTML = "あなたは行動を封じられています！このターンはスキップします。";
+        messageElement.innerHTML = "動きが封じられてカードが引けない..."; // メッセージを修正
         updateHP();
         console.log("Player is sealed. Skipping turn.");
 
@@ -744,11 +770,12 @@ function playCard(index) {
 function continuePlayerTurn(index) {
     const card = gameState.remainingCards[index];
     gameState.lastPlayedCardName = card.name;
-    messageElement.textContent = `あなたはカードを引いた！さぁ結果は...`;
+    // ①「プレイヤーはカードを引いた！さぁ...結果は！？」
+    messageElement.textContent = `プレイヤーはカードを引いた！さぁ...結果は！？`;
     gameState.remainingCards.splice(index, 1);
     console.log(`Player drew card: ${card.name}. Remaining cards:`, gameState.remainingCards);
 
-    // NEW: 使用されたカードがnoReappearRoundsを持つ場合、一時停止リストに追加
+    // 使用されたカードがnoReappearRoundsを持つ場合、一時停止リストに追加
     if (card.noReappearRounds) {
         gameState.usedNoReappearCards.push({
             name: card.name,
@@ -759,13 +786,13 @@ function continuePlayerTurn(index) {
 
     if (card.rare) { // rareプロパティを持つカードはusedRareCardsにも追加 (今後の拡張性のため)
         // note: usedRareCardsは現在、shuffleCardsで使用されていないため、機能していません。
-        gameState.usedRareCards.push(card.effect); 
+        gameState.usedRareCards.push(card.effect);
         // このsetTimeoutロジックは、以前のレアカード再出現ロジックの名残ですが、
         // now usedNoReappearCards is the primary mechanism for temporary removal.
-        setTimeout(() => { 
+        setTimeout(() => {
             const idx = gameState.usedRareCards.indexOf(card.effect);
             if (idx > -1) gameState.usedRareCards.splice(idx, 1);
-        }, 4000 * 3); 
+        }, 4000 * 3);
     }
 
     // specialプロパティを持つカードもusedSpecialCardsにも追加 (今後の拡張性のため)
@@ -776,7 +803,7 @@ function continuePlayerTurn(index) {
                                   card.effect.includes("HPを5回復") ? "HP5回復" : "";
         if (specialEffectName) {
             gameState.usedSpecialCards.push(specialEffectName);
-            setTimeout(() => { 
+            setTimeout(() => {
                 const idx = gameState.usedSpecialCards.indexOf(specialEffectName);
                 if (idx > -1) gameState.usedSpecialCards.splice(idx, 1);
             }, 4000 * 3);
@@ -788,18 +815,28 @@ function continuePlayerTurn(index) {
         gameState.usedLegendaryCards = true;
     }
 
+    // 履歴にカードを追加
+    gameState.playedCardsHistory.push({
+        round: gameState.currentRound,
+        player: 'あなた',
+        cardName: card.name,
+        cardIcon: card.icon,
+        cardEffect: card.effect
+    });
+
     renderCards();
     console.log("Player cards rendered. Waiting for card action.");
 
     // Initial delay for "さぁ結果は..."
-    setTimeout(() => { 
+    setTimeout(() => {
         try {
             console.log("setTimeout callback started for player card action.");
             const message = card.action(true); // カード効果を実行
             console.log("Card action executed. Message:", message);
 
+            // ②「（カード名）だ！（効果説明）！」
             if (message) {
-                messageElement.innerHTML = `「${card.name}」だ！${message}`;
+                messageElement.innerHTML = `${card.name}だ！${message}`;
             }
             updateHP();
             console.log("HP updated after player card action.");
@@ -812,7 +849,7 @@ function continuePlayerTurn(index) {
 
             console.log("Game not ended. Proceeding with message display delay.");
 
-            // NEW: Delay for user to read the card effect message before next turn's message
+            // Delay for user to read the card effect message before next turn's message
             setTimeout(() => { // この遅延でカード効果メッセージが表示されます
                 if (gameState.player.extraTurns > 0) {
                     gameState.player.extraTurns--;
@@ -850,7 +887,7 @@ function enemyTurn() {
     applyTurnStartEffects(false);
 
     // スキップスキルが発動している場合の処理
-    if (gameState.skillActiveEffects.skipNextEnemyTurn) { 
+    if (gameState.skillActiveEffects.skipNextEnemyTurn) {
         gameState.skillActiveEffects.skipNextEnemyTurn = false; // スキルを消費
         messageElement.innerHTML = `「スキップ」スキルが発動！相手の攻撃は無効化されました！`;
         updateHP();
@@ -866,7 +903,7 @@ function enemyTurn() {
         if (gameState.enemy.sealed === 0) {
             updateStatusDisplay(enemyStatusEffectsElement, '', 'red', 'enemySealed');
         }
-        messageElement.innerHTML = "ライバルは行動を封じられています！このターンはスキップします。";
+        messageElement.innerHTML = "動きが封じられてカードが引けない..."; // メッセージを修正
         updateHP();
         console.log("Enemy is sealed. Skipping turn.");
 
@@ -925,11 +962,12 @@ function performEnemyCardAction() {
     let randomIndex = Math.floor(Math.random() * gameState.remainingCards.length);
     let card = gameState.remainingCards[randomIndex];
     gameState.lastPlayedCardName = card.name;
-    messageElement.textContent = `ライバルのターン: 「${card.name}」だ！さぁ結果は...`;
+    // ①「ライバルはカードを引いた！さぁ...結果は！？」
+    messageElement.textContent = `ライバルはカードを引いた！さぁ...結果は！？`;
     gameState.remainingCards.splice(randomIndex, 1);
     console.log(`Enemy drew card: ${card.name}. Remaining cards:`, gameState.remainingCards);
 
-    // NEW: 使用されたカードがnoReappearRoundsを持つ場合、一時停止リストに追加
+    // 使用されたカードがnoReappearRoundsを持つ場合、一時停止リストに追加
     if (card.noReappearRounds) {
         gameState.usedNoReappearCards.push({
             name: card.name,
@@ -966,6 +1004,15 @@ function performEnemyCardAction() {
         gameState.usedLegendaryCards = true;
     }
 
+    // 履歴にカードを追加
+    gameState.playedCardsHistory.push({
+        round: gameState.currentRound,
+        player: 'ライバル',
+        cardName: card.name,
+        cardIcon: card.icon,
+        cardEffect: card.effect
+    });
+
     renderCards();
     console.log("Enemy cards rendered. Waiting for card action.");
 
@@ -976,8 +1023,9 @@ function performEnemyCardAction() {
             const message = card.action(false);
             console.log("Card action executed. Message:", message);
 
+            // ②「（カード名）だ！（効果説明）！」
             if (message) {
-                messageElement.innerHTML = `ライバルのターン: 「${card.name}」だ！${message}`;
+                messageElement.innerHTML = `${card.name}だ！${message}`;
             }
             updateHP();
             console.log("HP updated after enemy card action.");
@@ -990,7 +1038,7 @@ function performEnemyCardAction() {
 
             console.log("Game not ended. Proceeding with message display delay.");
 
-            // NEW: Delay for user to read the card effect message before next turn's message
+            // Delay for user to read the card effect message before next turn's message
             setTimeout(() => { // この遅延でカード効果メッセージが表示されます
                 if (gameState.enemy.extraTurns > 0) {
                     gameState.enemy.extraTurns--;
@@ -1042,7 +1090,7 @@ function applyTurnStartEffects(isPlayerTurn) {
         }
     }
 
-    // NEW: usedNoReappearCards の有効期限チェックと削除
+    // usedNoReappearCards の有効期限チェックと削除
     gameState.usedNoReappearCards = gameState.usedNoReappearCards.filter(entry => {
         if (gameState.currentRound >= entry.reappearRound) {
             console.log(`Card '${entry.name}' is now available again.`);
@@ -1051,7 +1099,7 @@ function applyTurnStartEffects(isPlayerTurn) {
         return true; // まだ再出現すべきではない場合は残す
     });
 
-    // NEW: スキル効果の期限チェックと解除
+    // スキル効果の期限チェックと解除
     if (gameState.skillActiveEffects.immuneToBadCards && gameState.currentRound > gameState.skillActiveEffects.immuneToBadCards) {
         console.log("Skill '慎重に' effect ended.");
         gameState.skillActiveEffects.immuneToBadCards = 0;
@@ -1080,69 +1128,30 @@ function applyTurnStartEffects(isPlayerTurn) {
 }
 
 
-// 結果画面の表示
-function showResultScreen(isVictory) {
-    hideAllScreens(); 
-    
-    overlay.style.display = 'block';
-    resultScreen.style.display = 'block';
-    resultScreen.innerHTML = ''; // 既存の内容をクリア
+// 結果画面の表示ロジックはplay.jsから削除され、victory.jsとdefeat.jsに移動します
 
-    let mainTitle = '';
-    let messageParagraph = '';
-
-    // 勝利時のメッセージを固定
-    if (isVictory) {
-        mainTitle = '🏆 あなたの勝ちだ！ 🏆'; 
-        messageParagraph = `あなたの勝ちだ！「${gameState.lastPlayedCardName}」がとどめの一撃となった！`;
-    } else { // 敗北時を固定
-        mainTitle = '☠️ 敗北...だと... ☠️';
-        messageParagraph = `あなたの敗北だ...。「${gameState.lastPlayedCardName}」が致命傷になってしまった。`;
-    }
-
-    let resultContent = `
-        <h2 class="${isVictory ? 'victory-title' : 'defeat-title'}">${mainTitle}</h2>
-        <p class="${isVictory ? 'victory-message' : 'defeat-message'}">${messageParagraph}</p>
-        <div class="button-group">
-            <button id="playAgainBtn" class="start-game-button">もう一度プレイ</button>
-            <button id="changeHpBtn" class="show-cards-button">ゲーム設定</button>
-        </div>
-    `;
-
-    resultScreen.innerHTML = resultContent;
-
-    document.getElementById('playAgainBtn').addEventListener('click', () => {
-        resultScreen.style.display = 'none';
-        overlay.style.display = 'none';
-        // gamesetting.htmlに戻る前にgameStateを保存
-        saveGameState();
-        window.location.href = 'gamestart.html'; // gamestart.htmlへ遷移してリセット
-    });
-
-    document.getElementById('changeHpBtn').addEventListener('click', () => {
-        resultScreen.style.display = 'none';
-        overlay.style.display = 'none';
-        // gamesetting.htmlに戻る前にgameStateを保存
-        saveGameState();
-        window.location.href = 'gamesetting.html'; // gamesetting.htmlへ遷移してリセット
-    });
-}
 
 // ゲーム終了判定
 function checkGameEnd() {
     if (gameState.player.hp <= 0 || gameState.enemy.hp <= 0) {
         // Skullアイコン表示はupdateHPで制御
-        
+
         // Game Set通知の表示を1秒遅延
-        setTimeout(() => { // NEW: Game Set表示の遅延
+        setTimeout(() => { // Game Set表示の遅延
             gameSetNotification.style.display = 'block';
             overlay.style.display = 'block';
 
             // Game Set通知が1.5秒表示され、その後非表示になる。
             // その後、結果画面を表示する。
-            setTimeout(() => { 
+            setTimeout(() => {
                 gameSetNotification.style.display = 'none'; // Game Set通知を非表示にする
-                showResultScreen(gameState.player.hp > 0); // 結果画面を表示
+                // 勝敗に応じて適切な結果画面へリダイレクト
+                saveGameState(); // リダイレクト前に最終状態を保存
+                if (gameState.player.hp > 0) {
+                    window.location.href = 'victory.html'; // 勝利画面へ
+                } else {
+                    window.location.href = 'defeat.html'; // 敗北画面へ
+                }
             }, 1500); // Game Setが表示されてから1.5秒後に結果画面
 
         }, 1000); // HPが0になってからGame Setが表示されるまでの1秒遅延
@@ -1190,18 +1199,19 @@ function resetGame() {
         usedSpecialCards: [],
         usedLegendaryCards: false,
         lastPlayedCardName: "",
-        usedNoReappearCards: [], // NEW: リセット時にこれもクリア
-        selectedSkill: null, // NEW: スキルもリセット
-        skillUsedThisGame: false, // NEW: スキル使用フラグもリセット
-        skillCooldownRound: 0, // NEW: スキルクールダウンもリセット
-        skillActiveEffects: { // NEW: アクティブスキル効果もリセット
+        usedNoReappearCards: [], // リセット時にこれもクリア
+        selectedSkill: null, // スキルもリセット
+        skillUsedThisGame: false, // スキル使用フラグもリセット
+        skillCooldownRound: 0, // スキルクールダウンもリセット
+        skillActiveEffects: { // アクティブスキル効果もリセット
             skipNextEnemyTurn: false,
             immuneToBadCards: 0,
             riskAndReturn: 0,
             divineBlessing: 0,
             divineBlessingDebuff: 0
         },
-        skillConfirmCallback: null
+        skillConfirmCallback: null,
+        playedCardsHistory: [] // 履歴もリセット
     };
 
     // DOM要素のクリアはplay.jsのresetGameで実行される
@@ -1211,7 +1221,7 @@ function resetGame() {
     updateRoundDisplay();
     updateHP(); // HP表示を更新してHPバーとSkullアイコンを初期状態に
     messageElement.textContent = "あなたのターンです。カードを選んでください。"; // これはゲームエリアの初期メッセージなので、設定画面では表示されない
-    
+
     // スキルボタンを非表示にし、活性化を解除
     if (activeSkillButton) { // DOM要素がロードされているか確認
         activeSkillButton.style.display = 'none';
@@ -1228,13 +1238,14 @@ function hideAllScreens() {
     if (confirmQuitPopup) confirmQuitPopup.style.display = 'none';
     if (roundNotification) roundNotification.style.display = 'none';
     if (gameSetNotification) gameSetNotification.style.display = 'none';
-    if (resultScreen) resultScreen.style.display = 'none';
     if (skillConfirmPopup) skillConfirmPopup.style.display = 'none';
+    if (recordPopup) recordPopup.style.display = 'none'; // 記録ポップアップも隠す
 
     if (overlay) overlay.style.display = 'none';
     if (quitButton) quitButton.style.display = 'none';
     if (currentRoundDisplay) currentRoundDisplay.style.display = 'none';
     if (activeSkillButton) activeSkillButton.style.display = 'none'; // スキルボタンも隠す
+    if (showRecordButton) showRecordButton.style.display = 'none'; // 記録ボタンも隠す
 }
 
 // プレイヤーのターンを開始する関数
@@ -1243,8 +1254,8 @@ function startPlayerTurn() {
     gameState.isAnimating = false; // プレイヤーの操作を有効にする
     messageElement.textContent = "あなたのターンです。カードを選んでください。";
     console.log("Player turn started. isAnimating set to false.");
-    
-    // NEW: スキル管理ロジック
+
+    // スキル管理ロジック
     if (gameState.enableSkills) {
         // クールダウンが経過した、またはまだスキルが選択されていない場合
         // (selectedSkillがnullなのは初回選択時のみ)
@@ -1253,8 +1264,8 @@ function startPlayerTurn() {
             // 初回選択画面で選ばれたスキルは selectedSkill に格納されているので、
             // その後のラウンド更新時には selectedSkill 以外から選ぶ、というロジックは不要
             // 全てのスキルの中からランダムに選び直す
-            const availableSkillsForNewSelection = allSkills; 
-            
+            const availableSkillsForNewSelection = allSkills;
+
             if (availableSkillsForNewSelection.length > 0) {
                 // 新しいスキルをランダムに選択して割り当て
                 gameState.selectedSkill = availableSkillsForNewSelection[Math.floor(Math.random() * availableSkillsForNewSelection.length)];
@@ -1285,7 +1296,7 @@ function startPlayerTurn() {
             activeSkillButton.style.display = 'flex'; // ボタンを表示
             activeSkillButton.disabled = gameState.skillUsedThisGame; // 使用済みなら無効
             activeSkillButton.classList.toggle('used', gameState.skillUsedThisGame); // 使用済みスタイル適用
-            
+
             const roundsRemaining = gameState.skillCooldownRound - gameState.currentRound;
             activeSkillButtonCooldown.textContent = `あと${roundsRemaining}R`;
         }
@@ -1294,16 +1305,25 @@ function startPlayerTurn() {
         gameState.selectedSkill = null;
         activeSkillButton.style.display = 'none'; // スキルボタンを完全に非表示
     }
+    // 記録ボタンを表示
+    if (showRecordButton) {
+        showRecordButton.style.display = 'block';
+        showRecordButton.disabled = false; // プレイヤーのターンで有効化
+    }
 }
 
 // 敵のターン準備をする関数
 function prepareEnemyTurn() {
     gameState.isPlayerTurn = false; // 敵のターンに切り替える
     console.log("Preparing for enemy turn.");
-    
+
     // スキルボタンを無効化
     if (activeSkillButton) {
         activeSkillButton.disabled = true;
+    }
+    // 記録ボタンを有効化 (敵のターンでも履歴は確認できるように)
+    if (showRecordButton) {
+        showRecordButton.disabled = false;
     }
     enemyTurn();
 }
@@ -1313,13 +1333,6 @@ function showCardInfo() {
     // cardInfoPopupとoverlayがplay.htmlに存在することを確認
     if (!cardInfoPopup || !overlay) {
         console.error("Error: cardInfoPopup or overlay element not found in play.html.");
-        return;
-    }
-
-    // cardInfoContentもここで取得するように変更
-    const cardInfoContent = document.getElementById('cardInfoContent');
-    if (!cardInfoContent) {
-        console.error("Error: cardInfoContent element not found in play.html.");
         return;
     }
 
@@ -1344,26 +1357,27 @@ function showCardInfo() {
             } else {
                 textColorClass = 'other-text';
             }
-
-            sectionHtml += `<p class="card-entry"><span class="card-icon">${card.icon || ''}</span><span class="card-text"><strong class="${textColorClass}">${card.name}</strong>: ${card.effect}`;
+            // レジェンドカードの場合のみ確率を表示
+            const probabilityText = card.legendary && card.chance !== undefined ? ` (出現率: ${card.chance * 100}%)` : '';
+            sectionHtml += `<p class="card-entry"><span class="card-icon">${card.icon || ''}</span><span class="card-text"><strong class="${textColorClass}">${card.name}</strong>: ${card.effect}${probabilityText}`;
             sectionHtml += `</span></p>`;
         });
         sectionHtml += `</div>`;
         return sectionHtml;
     };
 
-    const normalCards = allCards.filter(card => 
+    const normalCards = allCards.filter(card =>
         !card.isBad && !card.rare && !card.legendary && (card.type === 'attack' || card.type === 'defense' || card.type === 'heal')
     );
     // レアカードセクションに「盾よ守れ！」を含めるため、rareカードのフィルタリング条件を調整
     // card.rareがtrueで、かつcard.legendaryがfalseのカードをフィルタリング
-    const rareCards = allCards.filter(card => 
+    const rareCards = allCards.filter(card =>
         card.rare && !card.legendary
     );
     // ハプニングカードはisBadがtrueで、かつlegendaryではないカード
-    const badCards = allCards.filter(card => 
+    const badCards = allCards.filter(card =>
         card.isBad && !card.legendary
-    ); 
+    );
     const legendaryCards = allCards.filter(card => card.legendary);
 
     cardInfoContent.innerHTML += createCardSection('通常カード （出やすいカード）', normalCards, 'normal');
@@ -1373,7 +1387,7 @@ function showCardInfo() {
 
     cardInfoContent.innerHTML += createCardSection('その他、特殊効果について', [
         { name: '鎧', effect: 'ダメージ1軽減', icon: '🪖' },
-        { name: '盾', effect: 'ダメージ2軽減', icon: '🛡️' }, 
+        { name: '盾', effect: 'ダメージ2軽減', icon: '🛡️' },
         { name: '毒', effect: '毎ターン1ダメージ', icon: '☠️' },
         { name: '封', effect: '行動不能', icon: '🔒' },
         { name: '無', effect: '無敵状態（ダメージを受けない）', icon: '😇' }
@@ -1405,7 +1419,7 @@ function showSkillConfirmPopup() {
     gameState.skillConfirmCallback = (useIt) => {
         skillConfirmPopup.style.display = 'none';
         overlay.style.display = 'none';
-        
+
         if (useIt) {
             console.log(`Using skill: ${gameState.selectedSkill.name}`);
             gameState.skillUsedThisGame = true;
@@ -1419,7 +1433,7 @@ function showSkillConfirmPopup() {
             }
             updateHP();
             checkGameEnd();
-            
+
             setTimeout(() => {
                 gameState.isAnimating = false;
                 if (gameState.player.extraTurns <= 0) {
@@ -1428,13 +1442,51 @@ function showSkillConfirmPopup() {
                     startPlayerTurn();
                 }
             }, 2500);
-            
+
         } else {
             console.log("Skill use cancelled.");
             gameState.isAnimating = false;
         }
         gameState.skillConfirmCallback = null;
     };
+}
+
+// 記録ポップアップ表示関数
+function showRecordPopup() {
+    if (!recordPopup || !overlay) {
+        console.error("Error: recordPopup or overlay element not found.");
+        return;
+    }
+
+    recordContent.innerHTML = ''; // 既存の内容をクリア
+
+    if (gameState.playedCardsHistory.length === 0) {
+        recordContent.innerHTML = '<p style="text-align: center; color: #ccc;">まだカードは使われていません。</p>';
+    } else {
+        // 履歴を逆順にして最新のものが上に来るようにする
+        const reversedHistory = [...gameState.playedCardsHistory].reverse();
+        reversedHistory.forEach(entry => {
+            const recordEntryElement = document.createElement('div');
+            recordEntryElement.className = 'record-entry';
+            recordEntryElement.innerHTML = `
+                <span class="record-round">R${entry.round}</span>
+                <span class="record-player-name">${entry.player}:</span>
+                <span class="record-card-info"><span class="card-icon">${entry.cardIcon || ''}</span><strong>${entry.cardName}</strong>: ${entry.effect}</span>
+            `;
+            recordContent.appendChild(recordEntryElement);
+        });
+    }
+
+    recordPopup.style.display = 'block';
+    overlay.style.display = 'block';
+    console.log("記録ポップアップ表示");
+}
+
+// 記録ポップアップ非表示関数
+function closeRecordPopup() { // 関数名とDOM要素の変数名を一致させる
+    if (recordPopup) recordPopup.style.display = 'none';
+    if (overlay) overlay.style.display = 'none';
+    console.log("記録ポップアップ非表示");
 }
 
 
@@ -1452,12 +1504,11 @@ document.addEventListener('DOMContentLoaded', () => {
     gameAreaScreen = document.getElementById('gameArea');
     quitButton = document.getElementById('quitButton');
     cardInfoPopup = document.getElementById('cardInfo');
-    // cardInfoContentはshowCardInfo関数内で取得するように変更
+    cardInfoContent = document.getElementById('cardInfoContent');
     confirmQuitPopup = document.getElementById('confirmQuit');
     roundNotification = document.getElementById('roundNotification');
     overlay = document.getElementById('overlay');
     gameSetNotification = document.getElementById('gameSetNotification');
-    resultScreen = document.getElementById('resultScreen');
     currentRoundDisplay = document.getElementById('currentRoundDisplay');
     playerHpBarElement = document.getElementById('playerHpBar');
     enemyHpBarElement = document.getElementById('enemyHpBar');
@@ -1465,17 +1516,22 @@ document.addEventListener('DOMContentLoaded', () => {
     enemyStatusEffectsElement = document.getElementById('enemyStatusEffects');
 
     activeSkillButton = document.getElementById('activeSkillButton');
-    // activeSkillButtonがnullでないことを確認してからquerySelectorを呼び出す
     activeSkillButtonIcon = activeSkillButton ? activeSkillButton.querySelector('.skill-icon') : null;
     activeSkillButtonName = activeSkillButton ? activeSkillButton.querySelector('.skill-name') : null;
     activeSkillButtonCooldown = activeSkillButton ? activeSkillButton.querySelector('.skill-cooldown') : null;
-    
+
     skillConfirmPopup = document.getElementById('skillConfirmPopup');
-    // skillConfirmPopupがnullでないことを確認してからquerySelectorを呼び出す
     skillConfirmTitle = skillConfirmPopup ? skillConfirmPopup.querySelector('.popup-title') : null;
     skillConfirmDescription = skillConfirmPopup ? skillConfirmPopup.querySelector('.skill-confirm-description') : null;
     useSkillYesButton = document.getElementById('useSkillYes');
     useSkillNoButton = document.getElementById('useSkillNo');
+
+    // 記録関連DOM要素の割り当て
+    showRecordButton = document.getElementById('showRecordButton');
+    recordPopup = document.getElementById('recordPopup');
+    recordContent = document.getElementById('recordContent');
+    closeRecordPopupElement = document.getElementById('closeRecordPopup');
+
 
     // デバッグログで要素が取得できたか確認
     console.log('play.js DOM Elements initialized:');
@@ -1483,8 +1539,13 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('enemyStatusEffectsElement:', enemyStatusEffectsElement);
     console.log('messageElement:', messageElement);
     console.log('activeSkillButton:', activeSkillButton);
-    console.log('cardInfoPopup:', cardInfoPopup); // cardInfoPopupの取得確認
-    console.log('skillConfirmPopup:', skillConfirmPopup); // skillConfirmPopupの取得確認
+    console.log('cardInfoPopup:', cardInfoPopup);
+    console.log('cardInfoContent:', cardInfoContent);
+    console.log('skillConfirmPopup:', skillConfirmPopup);
+    console.log('showRecordButton:', showRecordButton);
+    console.log('recordPopup:', recordPopup);
+    console.log('recordContent:', recordContent);
+    console.log('closeRecordPopupElement:', closeRecordPopupElement);
 
 
     // 初期設定
@@ -1495,6 +1556,7 @@ document.addEventListener('DOMContentLoaded', () => {
     gameAreaScreen.style.display = 'flex'; // ゲームエリアを表示
     quitButton.style.display = 'block'; // 対戦終了ボタンを表示
     currentRoundDisplay.style.display = 'block'; // ラウンド表示を表示
+    // showRecordButton.style.display = 'block'; // startPlayerTurnで表示するためここでは削除
 
     // ロードしたgameStateでHPを更新
     gameState.player.hp = gameState.maxHP;
@@ -1518,7 +1580,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    if (document.getElementById('quitYes')) { // quitYesボタンの存在を確認
+    if (document.getElementById('quitYes')) {
         document.getElementById('quitYes').addEventListener('click', () => {
             confirmQuitPopup.style.display = 'none';
             overlay.style.display = 'none';
@@ -1527,42 +1589,91 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    if (document.getElementById('quitNo')) { // quitNoボタンの存在を確認
+    if (document.getElementById('quitNo')) {
         document.getElementById('quitNo').addEventListener('click', () => {
             confirmQuitPopup.style.display = 'none';
             overlay.style.display = 'none';
         });
     }
 
-    if (document.getElementById('showCardsInGame')) { // 「カードの種類を確認」ボタンの存在を確認
+    if (document.getElementById('showCardsInGame')) {
         document.getElementById('showCardsInGame').addEventListener('click', showCardInfo);
     }
-    
-    if (document.getElementById('closeCardInfo')) { // closeCardInfoボタンの存在を確認
+
+    if (document.getElementById('closeCardInfo')) {
         document.getElementById('closeCardInfo').addEventListener('click', () => {
             if (cardInfoPopup) cardInfoPopup.style.display = 'none';
             if (overlay) overlay.style.display = 'none';
-            // ポップアップタイトルを元に戻す（念のため）
             if (cardInfoPopup) cardInfoPopup.querySelector('.popup-title').textContent = "カードの種類と効果";
         });
     }
 
     // スキルボタンのイベントリスナー
-    if (activeSkillButton) { // activeSkillButtonがnullでないことを確認
+    if (activeSkillButton) {
         activeSkillButton.addEventListener('click', showSkillConfirmPopup);
     }
-    if (useSkillYesButton) { // useSkillYesButtonの存在を確認
+    if (useSkillYesButton) {
         useSkillYesButton.addEventListener('click', () => {
             if (gameState.skillConfirmCallback) {
                 gameState.skillConfirmCallback(true);
             }
         });
     }
-    if (useSkillNoButton) { // useSkillNoButtonの存在を確認
+    if (useSkillNoButton) {
         useSkillNoButton.addEventListener('click', () => {
             if (gameState.skillConfirmCallback) {
                 gameState.skillConfirmCallback(false);
             }
         });
+    }
+
+    // 記録ボタンのイベントリスナー
+    if (showRecordButton) {
+        showRecordButton.addEventListener('click', showRecordPopup);
+    }
+    // closeRecordPopupElement を使用
+    if (closeRecordPopupElement) {
+        closeRecordPopupElement.addEventListener('click', closeRecordPopup);
+    }
+
+    // NEW: オーバーレイクリックでポップアップを閉じる処理
+    if (overlay) {
+        overlay.addEventListener('click', () => {
+            // ポップアップが複数開いている可能性があるので、優先順位をつけて閉じる
+            if (skillConfirmPopup && skillConfirmPopup.style.display === 'block') {
+                skillConfirmPopup.style.display = 'none';
+                overlay.style.display = 'none';
+                gameState.isAnimating = false; // アニメーションフラグをリセット
+                if (gameState.skillConfirmCallback) { // 保留中のスキルアクションがあればキャンセル
+                    gameState.skillConfirmCallback(false);
+                    gameState.skillConfirmCallback = null;
+                }
+            } else if (recordPopup && recordPopup.style.display === 'block') {
+                recordPopup.style.display = 'none';
+                overlay.style.display = 'none';
+            } else if (cardInfoPopup && cardInfoPopup.style.display === 'block') {
+                cardInfoPopup.style.display = 'none';
+                overlay.style.display = 'none';
+            } else if (confirmQuitPopup && confirmQuitPopup.style.display === 'block') {
+                confirmQuitPopup.style.display = 'none';
+                overlay.style.display = 'none';
+            }
+            // roundNotification と gameSetNotification は一時的な通知なので、
+            // オーバーレイクリックでは閉じない（自動で消えるため）
+        });
+    }
+
+    // NEW: ポップアップ内でのクリックがオーバーレイに伝播しないようにする
+    if (cardInfoPopup) {
+        cardInfoPopup.addEventListener('click', (e) => e.stopPropagation());
+    }
+    if (skillConfirmPopup) {
+        skillConfirmPopup.addEventListener('click', (e) => e.stopPropagation());
+    }
+    if (recordPopup) {
+        recordPopup.addEventListener('click', (e) => e.stopPropagation());
+    }
+    if (confirmQuitPopup) {
+        confirmQuitPopup.addEventListener('click', (e) => e.stopPropagation());
     }
 });

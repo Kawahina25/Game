@@ -1,0 +1,48 @@
+/* defeat.css */
+
+/* game-containerの背景画像を完全に無効化 */
+.game-container {
+    background-image: none; /* 背景画像を完全に無効化 */
+    background-color: #8b0000; /* 敗北画面の背景色を直接指定 (赤系) */
+    background-size: cover;
+    background-position: center;
+}
+
+/* 敗北画面のタイトル色 */
+.result-screen h2.defeat-title {
+    color: #f00;
+    text-shadow: 0 0 10px rgba(255,0,0,0.8), 0 0 20px rgba(255,0,0,0.5);
+}
+
+/* 敗北画面のメッセージ色 */
+.result-screen p.defeat-message {
+    color: #ffaaaa;
+    font-weight: bold;
+}
+
+/* 敗北画面のボタン */
+.result-screen #playAgainBtn {
+    background: linear-gradient(to bottom, #d00, #900); /* 赤系のボタン */
+    border-color: #ff5555;
+    color: white;
+}
+
+.result-screen #playAgainBtn:hover {
+    background: linear-gradient(to bottom, #e00, #a00);
+    transform: translateY(-2px);
+    box-shadow: 5px 5px 12px rgba(0,0,0,0.8);
+}
+
+.result-screen #changeHpBtn {
+    background: linear-gradient(to bottom, #5a5a5a, #3a3a3a);
+    border-color: #888;
+    color: #eee;
+}
+
+.result-screen #changeHpBtn:hover {
+    background: linear-gradient(to bottom, #6a6a6a, #4a4a4a);
+    transform: translateY(-2px);
+    box-shadow: 5px 5px 12px rgba(0,0,0,0.8);
+}
+
+/* レスポンシブデザインはcommon.cssで共有されるため、ここでは個別の調整のみ */

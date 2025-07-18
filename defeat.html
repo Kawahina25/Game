@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luck is the key - 敗北...</title>
+    <!-- Google Fonts: Cinzel (タイトル用) と Noto Sans JP (本文用) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <!-- 共通CSSファイルをリンク -->
+    <link rel="stylesheet" href="common.css">
+    <!-- 敗北画面専用CSSファイルをリンク -->
+    <link rel="stylesheet" href="defeat.css">
+</head>
+<body>
+    <div class="game-container" id="gameContainer">
+        <!-- 敗北画面のコンテンツはJavaScriptで動的に挿入されます -->
+        <div id="resultScreen" class="result-screen"></div>
+    </div>
+
+    <!-- JavaScriptファイルをリンク (defer属性でHTMLの解析後に実行) -->
+    <script src="defeat.js" defer></script>
+</body>
+</html>

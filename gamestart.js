@@ -14,10 +14,10 @@ const allCards = [
     { name: "盾よ守れ！", effect: "2ターンの間、ダメージを2軽減する", count: 2, special: true, icon: '🛡️', type: 'rare', rare: true },
     { name: "毒物混入", effect: "毒を与える", count: 1, rare: true, special: true, icon: '☠️', type: 'rare' },
     { name: "ぶん殴る", effect: "10ダメージを与える", count: 1, rare: true, icon: '💢', type: 'rare' },
-    { name: "最高のポーション", effect: "HPが全回復", count: 0, legendary: true, chance: 0.05, icon: '💖', type: 'legendary' },
-    { name: "あべこべ", effect: "HP入れ替え", count: 1, isBad: true, icon: '🔄', type: 'bad', noReappearRounds: 2, reappearEffectName: "あべこべ" },
-    { name: "封じちゃえ ♪", effect: "行動を封じる", count: 0, legendary: true, chance: 0.02, icon: '🔒', type: 'legendary' },
-    { name: "一撃必殺", effect: "一撃必殺", count: 0, legendary: true, chance: 0.003, icon: '🎯', type: 'legendary' },
+    { name: "最高のポーション", effect: "HPが全回復", count: 0, legendary: true, chance: 0.03, icon: '💖', type: 'legendary' },
+    { name: "あべこべ", effect: "HP入れ替え", count: 1, isBad: true, icon: '🔄', type: 'bad', noReappearRounds: 2, reappearEffectName: "頭をぶつけてしまった" },
+    { name: "封じちゃえ ♪", effect: "相手の行動を2ターン封じる。あなたは追加で2回行動できる。", count: 0, legendary: true, chance: 0.01, icon: '🔒', type: 'legendary' },
+    { name: "一撃必殺", effect: "一撃必殺", count: 0, legendary: true, chance: 0.001, icon: '🎯', type: 'legendary' },
     { name: "神のご加護を", effect: "2ラウンド無敵", count: 0, legendary: true, chance: 0.005, icon: '😇', type: 'legendary' }
 ];
 
@@ -58,22 +58,24 @@ function showCardInfo() {
             } else {
                 textColorClass = 'other-text';
             }
-            sectionHtml += `<p class="card-entry"><span class="card-icon">${card.icon || ''}</span><span class="card-text"><strong class="${textColorClass}">${card.name}</strong>: ${card.effect}`;
+            // レジェンドカードの場合のみ確率を表示
+            const probabilityText = card.legendary && card.chance !== undefined ? ` (出現率: ${card.chance * 100}%)` : '';
+            sectionHtml += `<p class="card-entry"><span class="card-icon">${card.icon || ''}</span><span class="card-text"><strong class="${textColorClass}">${card.name}</strong>: ${card.effect}${probabilityText}`;
             sectionHtml += `</span></p>`;
         });
         sectionHtml += `</div>`;
         return sectionHtml;
     };
 
-    const normalCards = allCards.filter(card => 
+    const normalCards = allCards.filter(card =>
         !card.isBad && !card.rare && !card.legendary && (card.type === 'attack' || card.type === 'defense' || card.type === 'heal')
     );
-    const rareCards = allCards.filter(card => 
+    const rareCards = allCards.filter(card =>
         card.rare && !card.legendary
     );
-    const badCards = allCards.filter(card => 
+    const badCards = allCards.filter(card =>
         card.isBad && !card.legendary
-    ); 
+    );
     const legendaryCards = allCards.filter(card => card.legendary);
 
     cardInfoContent.innerHTML += createCardSection('通常カード （出やすいカード）', normalCards, 'normal');
@@ -83,7 +85,7 @@ function showCardInfo() {
 
     cardInfoContent.innerHTML += createCardSection('その他、特殊効果について', [
         { name: '鎧', effect: 'ダメージ1軽減', icon: '🪖' },
-        { name: '盾', effect: 'ダメージ2軽減', icon: '🛡️' }, 
+        { name: '盾', effect: 'ダメージ2軽減', icon: '🛡️' },
         { name: '毒', effect: '毎ターン1ダメージ', icon: '☠️' },
         { name: '封', effect: '行動不能', icon: '🔒' },
         { name: '無', effect: '無敵状態（ダメージを受けない）', icon: '😇' }
@@ -91,6 +93,9 @@ function showCardInfo() {
 
     cardInfoPopup.style.display = 'block';
     overlay.style.display = 'block';
+    // ポップアップのスクロール位置をリセット
+    cardInfoContent.scrollTop = 0;
+    console.log("Card info popup shown in gamestart.js. Current display style:", cardInfoPopup.style.display); // Debug log
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -117,5 +122,25 @@ document.addEventListener('DOMContentLoaded', () => {
     closeCardInfoButton.addEventListener('click', () => {
         cardInfoPopup.style.display = 'none';
         overlay.style.display = 'none';
+        console.log("Card info popup closed by close button in gamestart.js."); // Debug log
     });
+
+    // オーバーレイクリックでポップアップを閉じる処理
+    if (overlay && cardInfoPopup) { // 両方の要素が存在することを確認
+        overlay.addEventListener('click', () => {
+            if (cardInfoPopup.style.display === 'block') { // ポップアップが実際に表示されている場合のみ閉じる
+                cardInfoPopup.style.display = 'none';
+                overlay.style.display = 'none';
+                console.log("Card info popup closed via overlay click in gamestart.js."); // Debug log
+            }
+        });
+
+        // ポップアップ内でのクリックがオーバーレイに伝播しないようにする
+        cardInfoPopup.addEventListener('click', (e) => {
+            e.stopPropagation();
+            console.log("Click inside card info popup, stopping propagation in gamestart.js."); // Debug log
+        });
+    } else {
+        console.error("Overlay or cardInfoPopup element not found in gamestart.js. Cannot attach outer click listener."); // Debug log
+    }
 });

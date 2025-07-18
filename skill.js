@@ -14,44 +14,43 @@ const allCards = [
     { name: "盾よ守れ！", effect: "2ターンの間、ダメージを2軽減する", count: 2, special: true, icon: '🛡️', type: 'rare', rare: true },
     { name: "毒物混入", effect: "毒を与える", count: 1, rare: true, special: true, icon: '☠️', type: 'rare' },
     { name: "ぶん殴る", effect: "10ダメージを与える", count: 1, rare: true, icon: '💢', type: 'rare' },
-    { name: "最高のポーション", effect: "HPが全回復", count: 0, legendary: true, chance: 0.05, icon: '💖', type: 'legendary' },
-    { name: "あべこべ", effect: "HP入れ替え", count: 1, isBad: true, icon: '🔄', type: 'bad', noReappearRounds: 2, reappearEffectName: "あべこべ" },
-    { name: "封じちゃえ ♪", effect: "行動を封じる", count: 0, legendary: true, chance: 0.02, icon: '🔒', type: 'legendary' },
-    { name: "一撃必殺", effect: "一撃必殺", count: 0, legendary: true, chance: 0.003, icon: '🎯', type: 'legendary' },
+    { name: "最高のポーション", effect: "HPが全回復", count: 0, legendary: true, chance: 0.03, icon: '💖', type: 'legendary' },
+    { name: "あべこべ", effect: "HP入れ替え", count: 1, isBad: true, icon: '🔄', type: 'bad', noReappearRounds: 2, reappearEffectName: "頭をぶつけてしまった" },
+    { name: "封じちゃえ ♪", effect: "相手の行動を2ターン封じる。あなたは追加で2回行動できる。", count: 0, legendary: true, chance: 0.01, icon: '🔒', type: 'legendary' },
+    { name: "一撃必殺", effect: "一撃必殺", count: 0, legendary: true, chance: 0.001, icon: '🎯', type: 'legendary' },
     { name: "神のご加護を", effect: "2ラウンド無敵", count: 0, legendary: true, chance: 0.005, icon: '😇', type: 'legendary' }
 ];
 
 // 全てのスキルデータ (gamesetting.js, play.jsと共通)
 const allSkills = [
-    { 
-        name: "スキップ", 
+    {
+        name: "スキップ",
         icon: "💨",
-        effect: "次の相手のターン、60%の確率でカードの効果がなくなる。ただし、確率を外すと、自分がその効果を食らってしまう。", 
-        // actionプロパティはplay.jsでのみ使用するため、ここでは定義しないか、ダミー関数にする
-        action: () => {} 
+        effect: "次の相手のターン、60%の確率でカードの効果がなくなる。ただし、確率を外すと、自分がその効果を食らってしまう。",
+        action: () => {}
     },
-    { 
-        name: "透視", 
+    {
+        name: "透視",
         icon: "🔮",
-        effect: "スキルを使うと、任意でカードを1枚選び、そのカードの効果が分かる。", 
+        effect: "スキルを使うと、任意でカードを1枚選び、そのカードの効果が分かる。",
         action: () => {}
     },
-    { 
-        name: "慎重に", 
+    {
+        name: "慎重に",
         icon: "🐢",
-        effect: "3ターンの間、ハプニングカードの効果を受けない。", 
+        effect: "3ターンの間、ハプニングカードの効果を受けない。",
         action: () => {}
     },
-    { 
-        name: "リスクandリターン", 
+    {
+        name: "リスクandリターン",
         icon: "🔥",
-        effect: "2ターンの間、攻撃する際に＋2の追加攻撃をする。ただし、受けるダメージも＋2される。", 
+        effect: "2ターンの間、攻撃する際に＋2の追加攻撃をする。ただし、受けるダメージも＋2される。",
         action: () => {}
     },
-    { 
-        name: "ご加護を", 
+    {
+        name: "ご加護を",
         icon: "✨",
-        effect: "回復系と防御系の効果が＋3される。ただし、スキルが終わると、3ターンの間、回復系と防御系の効果を受けれなくなる。", 
+        effect: "回復系と防御系の効果が＋3される。ただし、スキルが終わると、3ターンの間、回復系と防御系の効果を受けれなくなる。",
         action: () => {}
     }
 ];
@@ -120,14 +119,18 @@ function saveGameState() {
     // selectedSkillのactionプロパティは保存しない（循環参照を防ぐため）
     const stateToSave = { ...gameState };
     if (stateToSave.selectedSkill) {
-        stateToSave.selectedSkill = { 
+        stateToSave.selectedSkill = {
             name: stateToSave.selectedSkill.name,
             icon: stateToSave.selectedSkill.icon,
             effect: stateToSave.selectedSkill.effect
         }; // actionプロパティを除外
     }
-    localStorage.setItem('kardgame_gameState', JSON.stringify(stateToSave));
-    console.log("GameState saved to localStorage (skill.js).");
+    try {
+        localStorage.setItem('kardgame_gameState', JSON.stringify(stateToSave));
+        console.log("GameState saved to localStorage (skill.js).");
+    } catch (e) {
+        console.error("Error saving gameState to localStorage:", e);
+    }
 }
 
 // 全てのゲーム画面とポップアップを非表示にする共通関数 (skill.js用)
@@ -198,7 +201,7 @@ function showSkillSelectScreen() {
             button.addEventListener('click', function() {
                 const skillName = this.dataset.skillName;
                 const tempSelectedSkill = allSkills.find(s => s.name === skillName);
-                
+
                 // 選択されたスキルカードをハイライト
                 document.querySelectorAll('.skill-option-card').forEach(card => {
                     card.classList.remove('selected');
@@ -218,7 +221,7 @@ function showSkillSelectionConfirmPopup(skill) {
     overlay.style.display = 'block';
     gameState.isAnimating = true; // ポップアップ表示中はアニメーションを有効に
     console.log("スキル選択確認ポップアップ表示: isAnimating = true");
-    
+
     skillSelectionConfirmPopup.querySelector('.popup-title').textContent = "このスキルでいいか？";
     selectedSkillInfo.innerHTML = `
         <h4>${skill.icon} ${skill.name}</h4>
@@ -238,8 +241,15 @@ function showSkillSelectionConfirmPopup(skill) {
         gameState.isAnimating = false; // ここでアニメーションフラグをリセット
         console.log("スキル選択確認ポップアップ閉じる（大丈夫だ）: isAnimating = false");
 
-        saveGameState(); // ゲーム開始前に現在の設定を保存
-        window.location.href = 'play.html'; // play.htmlへ遷移
+        try {
+            saveGameState(); // ゲーム開始前に現在の設定を保存
+            console.log("GameState saved. Attempting to navigate to play.html...");
+            window.location.href = 'play.html'; // play.htmlへ遷移
+        } catch (e) {
+            console.error("Error during saveGameState or navigation:", e);
+            // エラーが発生した場合、ユーザーにメッセージを表示するなどの対応も可能
+            // 例: alert("ゲームの開始中にエラーが発生しました。コンソールを確認してください。");
+        }
     };
 
     confirmSkillSelectionNoButton.textContent = "全然だめだ";
@@ -283,4 +293,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // スキル選択画面を表示（DOMContentLoadedで直接呼び出す）
     showSkillSelectScreen();
+
+    // NEW: オーバーレイクリックでポップアップを閉じる処理
+    if (overlay) {
+        overlay.addEventListener('click', () => {
+            if (cardInfoPopup && cardInfoPopup.style.display === 'block') {
+                cardInfoPopup.style.display = 'none';
+                overlay.style.display = 'none';
+            } else if (skillSelectionConfirmPopup && skillSelectionConfirmPopup.style.display === 'block') {
+                // スキル選択確認ポップアップの場合、キャンセルボタンの挙動をシミュレート
+                confirmSkillSelectionNoButton.click();
+            }
+        });
+    }
+
+    // NEW: ポップアップ内でのクリックがオーバーレイに伝播しないようにする
+    if (cardInfoPopup) {
+        cardInfoPopup.addEventListener('click', (e) => e.stopPropagation());
+    }
+    if (skillSelectionConfirmPopup) {
+        skillSelectionConfirmPopup.addEventListener('click', (e) => e.stopPropagation());
+    }
 });

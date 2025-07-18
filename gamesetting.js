@@ -14,10 +14,10 @@ const allCards = [
     { name: "盾よ守れ！", effect: "2ターンの間、ダメージを2軽減する", count: 2, special: true, icon: '🛡️', type: 'rare', rare: true },
     { name: "毒物混入", effect: "毒を与える", count: 1, rare: true, special: true, icon: '☠️', type: 'rare' },
     { name: "ぶん殴る", effect: "10ダメージを与える", count: 1, rare: true, icon: '💢', type: 'rare' },
-    { name: "最高のポーション", effect: "HPが全回復", count: 0, legendary: true, chance: 0.05, icon: '💖', type: 'legendary' },
-    { name: "あべこべ", effect: "HP入れ替え", count: 1, isBad: true, icon: '🔄', type: 'bad', noReappearRounds: 2, reappearEffectName: "あべこべ" },
-    { name: "封じちゃえ ♪", effect: "行動を封じる", count: 0, legendary: true, chance: 0.02, icon: '🔒', type: 'legendary' },
-    { name: "一撃必殺", effect: "一撃必殺", count: 0, legendary: true, chance: 0.003, icon: '🎯', type: 'legendary' },
+    { name: "最高のポーション", effect: "HPが全回復", count: 0, legendary: true, chance: 0.03, icon: '💖', type: 'legendary' },
+    { name: "あべこべ", effect: "HP入れ替え", count: 1, isBad: true, icon: '🔄', type: 'bad', noReappearRounds: 2, reappearEffectName: "頭をぶつけてしまった" },
+    { name: "封じちゃえ ♪", effect: "相手の行動を2ターン封じる。あなたは追加で2回行動できる。", count: 0, legendary: true, chance: 0.01, icon: '🔒', type: 'legendary' },
+    { name: "一撃必殺", effect: "一撃必殺", count: 0, legendary: true, chance: 0.001, icon: '🎯', type: 'legendary' },
     { name: "神のご加護を", effect: "2ラウンド無敵", count: 0, legendary: true, chance: 0.005, icon: '😇', type: 'legendary' }
 ];
 
@@ -64,7 +64,7 @@ let cardInfoPopup;
 let cardInfoContent;
 let closeCardInfoButton;
 let overlay;
-
+let backButton; // 戻るボタンの宣言
 
 // localStorageからgameStateをロードする関数 (kardgame.jsと共通)
 function loadGameState() {
@@ -88,7 +88,7 @@ function saveGameState() {
     // selectedSkillのactionプロパティは保存しない（循環参照を防ぐため）
     const stateToSave = { ...gameState };
     if (stateToSave.selectedSkill) {
-        stateToSave.selectedSkill = { 
+        stateToSave.selectedSkill = {
             name: stateToSave.selectedSkill.name,
             icon: stateToSave.selectedSkill.icon,
             effect: stateToSave.selectedSkill.effect
@@ -126,22 +126,24 @@ function showCardInfo() {
             } else {
                 textColorClass = 'other-text';
             }
-            sectionHtml += `<p class="card-entry"><span class="card-icon">${card.icon || ''}</span><span class="card-text"><strong class="${textColorClass}">${card.name}</strong>: ${card.effect}`;
+            // レジェンドカードの場合のみ確率を表示
+            const probabilityText = card.legendary && card.chance !== undefined ? ` (出現率: ${card.chance * 100}%)` : '';
+            sectionHtml += `<p class="card-entry"><span class="card-icon">${card.icon || ''}</span><span class="card-text"><strong class="${textColorClass}">${card.name}</strong>: ${card.effect}${probabilityText}`;
             sectionHtml += `</span></p>`;
         });
         sectionHtml += `</div>`;
         return sectionHtml;
     };
 
-    const normalCards = allCards.filter(card => 
+    const normalCards = allCards.filter(card =>
         !card.isBad && !card.rare && !card.legendary && (card.type === 'attack' || card.type === 'defense' || card.type === 'heal')
     );
-    const rareCards = allCards.filter(card => 
+    const rareCards = allCards.filter(card =>
         card.rare && !card.legendary
     );
-    const badCards = allCards.filter(card => 
+    const badCards = allCards.filter(card =>
         card.isBad && !card.legendary
-    ); 
+    );
     const legendaryCards = allCards.filter(card => card.legendary);
 
     cardInfoContent.innerHTML += createCardSection('通常カード （出やすいカード）', normalCards, 'normal');
@@ -151,7 +153,7 @@ function showCardInfo() {
 
     cardInfoContent.innerHTML += createCardSection('その他、特殊効果について', [
         { name: '鎧', effect: 'ダメージ1軽減', icon: '🪖' },
-        { name: '盾', effect: 'ダメージ2軽減', icon: '🛡️' }, 
+        { name: '盾', effect: 'ダメージ2軽減', icon: '🛡️' },
         { name: '毒', effect: '毎ターン1ダメージ', icon: '☠️' },
         { name: '封', effect: '行動不能', icon: '🔒' },
         { name: '無', effect: '無敵状態（ダメージを受けない）', icon: '😇' }
@@ -159,6 +161,46 @@ function showCardInfo() {
 
     cardInfoPopup.style.display = 'block';
     overlay.style.display = 'block';
+    // NEW: ポップアップのスクロール位置をリセット
+    cardInfoContent.scrollTop = 0;
+}
+
+// ゲーム進行に関する状態を初期化する関数
+function resetGameProgress() {
+    // ユーザーがgamesetting.htmlで選択した設定は維持する
+    const currentSettings = {
+        maxHP: gameState.maxHP,
+        numCardsInHand: gameState.numCardsInHand,
+        enableHealCards: gameState.enableHealCards,
+        enableBadCards: gameState.enableBadCards,
+        enableRareCards: gameState.enableRareCards,
+        enableSkills: gameState.enableSkills,
+    };
+
+    // ゲーム進行に関する全ての状態を初期値にリセット
+    gameState.player = { hp: currentSettings.maxHP, shield: 0, poison: 0, armor: 0, sealed: 0, extraTurns: 0, invincible: 0 };
+    gameState.enemy = { hp: currentSettings.maxHP, shield: 0, poison: 0, armor: 0, sealed: 0, extraTurns: 0, invincible: 0 };
+    gameState.isPlayerTurn = true;
+    gameState.remainingCards = [];
+    gameState.currentRound = 1; // ここでラウンドを1にリセット
+    gameState.isAnimating = false;
+    gameState.usedRareCards = [];
+    gameState.usedSpecialCards = [];
+    gameState.usedLegendaryCards = false;
+    gameState.lastPlayedCardName = "";
+    gameState.usedNoReappearCards = [];
+    gameState.selectedSkill = null; // スキルもリセット
+    gameState.skillUsedThisGame = false;
+    gameState.skillCooldownRound = 0;
+    gameState.skillActiveEffects = {
+        skipNextEnemyTurn: false, immuneToBadCards: 0, riskAndReturn: 0, divineBlessing: 0, divineBlessingDebuff: 0
+    };
+    gameState.skillConfirmCallback = null;
+    gameState.playedCardsHistory = []; // 履歴もリセット
+
+    // 設定を再度適用 (主にHPをmaxHPに設定するため)
+    Object.assign(gameState, currentSettings);
+    console.log("Game progress reset in gamesetting.js:", gameState);
 }
 
 
@@ -177,6 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
     cardInfoContent = document.getElementById('cardInfoContent');
     closeCardInfoButton = document.getElementById('closeCardInfo');
     overlay = document.getElementById('overlay');
+    backButton = document.getElementById('backButton'); // 戻るボタンの宣言
 
     // 初期表示設定
     hideAllScreens();
@@ -245,7 +288,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     startGameButton.addEventListener('click', () => {
-        saveGameState(); // ゲーム開始前に最終設定を保存
+        resetGameProgress(); // ゲーム開始前にゲーム進行に関する状態をリセット
+        saveGameState(); // リセットされた状態を保存
         if (gameState.enableSkills) {
             window.location.href = 'skill.html'; // スキルONならskill.htmlへ
         } else {
@@ -258,4 +302,26 @@ document.addEventListener('DOMContentLoaded', () => {
         cardInfoPopup.style.display = 'none';
         overlay.style.display = 'none';
     });
+
+    // 戻るボタンのイベントリスナー
+    if (backButton) {
+        backButton.addEventListener('click', () => {
+            window.location.href = 'gamestart.html'; // gamestart.htmlへ遷移
+        });
+    }
+
+    // NEW: オーバーレイクリックでポップアップを閉じる処理
+    if (overlay) {
+        overlay.addEventListener('click', () => {
+            if (cardInfoPopup && cardInfoPopup.style.display === 'block') {
+                cardInfoPopup.style.display = 'none';
+                overlay.style.display = 'none';
+            }
+        });
+    }
+
+    // NEW: ポップアップ内でのクリックがオーバーレイに伝播しないようにする
+    if (cardInfoPopup) {
+        cardInfoPopup.addEventListener('click', (e) => e.stopPropagation());
+    }
 });

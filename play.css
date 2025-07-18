@@ -2,7 +2,7 @@
 
 /* game-containerの背景画像（play.html専用） */
 .game-container {
-    background-image: url('https://placehold.co/800x600/3a3a3a/3a3a3a/png'); /* テキストのない単色プレースホルダー画像 */
+    background-image: url('https://placehold.co/800x600/3a3a3a/3a3a3a'); /* 背景色と文字色を同じにしてテキストを非表示に */
     background-size: cover;
     background-position: center;
 }
@@ -132,7 +132,7 @@
     justify-content: center;
     cursor: pointer;
     background-color: #3a3a3a;
-    background-image: url('https://placehold.co/120x180/4a4a4a/ffffff/png?text=Card+Back');
+    background-image: url('https://placehold.co/120x180/4a4a4a/4a4a4a'); /* 背景色と文字色を同じにしてテキストを非表示に */
     background-size: cover;
     background-position: center;
     color: #ccc; /* 「？」の色 */
@@ -196,64 +196,8 @@
 }
 
 
-/* 結果画面のスタイル */
-.result-screen {
-    background-color: rgba(45, 45, 45, 0.95);
-    border: 2px solid #777;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 0 25px rgba(0,0,0,0.9);
-    text-align: center;
-    max-width: 98vw;
-    width: 90%;
-    margin: 0 auto;
-    color: #e0e0e0;
-}
+/* 結果画面のスタイルはcommon.cssに移動しました */
 
-.result-screen h2 {
-    font-size: 3em;
-    margin-bottom: 20px;
-    text-shadow: 2px 2px 5px rgba(0,0,0,0.8);
-}
-
-.result-screen h2.victory-title {
-    color: #0c0;
-    text-shadow: 0 0 10px rgba(0,255,0,0.8), 0 0 20px rgba(0,255,0,0.5);
-}
-
-.result-screen h2.defeat-title {
-    color: #f00;
-    text-shadow: 0 0 10px rgba(255,0,0,0.8), 0 0 20px rgba(255,0,0,0.5);
-}
-
-
-.result-screen p {
-    font-size: 1.3em;
-    margin-bottom: 30px;
-}
-
-.result-screen p.victory-message {
-    color: #aaffaa;
-    font-weight: bold;
-}
-
-.result-screen p.defeat-message {
-    color: #ffaaaa;
-    font-weight: bold;
-}
-
-
-.result-screen #playAgainBtn {
-    background: linear-gradient(to bottom, #d00, #900);
-    border-color: #ff5555;
-    color: white;
-}
-
-.result-screen #changeHpBtn {
-    background: linear-gradient(to bottom, #5a5a5a, #3a3a3a);
-    border-color: #888;
-    color: #eee;
-}
 
 /* ゲームセット通知 */
 .game-set-notification {
@@ -335,6 +279,76 @@
     color: #ccc;
 }
 
+/* 記録ボタンコンテナ */
+.record-button-container {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    z-index: 1;
+}
+
+.record-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 60px;
+    padding: 5px;
+    background: linear-gradient(to bottom, #4CAF50, #2E7D32); /* 緑系のボタン */
+    border: 2px solid #81C784;
+    border-radius: 8px;
+    color: white;
+    font-size: 1em;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.record-button:hover {
+    background: linear-gradient(to bottom, #66BB6A, #388E3C);
+    transform: translateY(-2px);
+    box-shadow: 3px 3px 8px rgba(0,0,0,0.7);
+}
+
+/* 記録ポップアップ内のスタイル */
+.record-entry {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    padding-bottom: 5px;
+    border-bottom: 1px dashed #555;
+}
+
+.record-entry:last-child {
+    border-bottom: none;
+}
+
+.record-entry .record-round {
+    font-weight: bold;
+    color: #ffd700; /* ラウンド番号の色 */
+    margin-right: 10px;
+    flex-shrink: 0;
+    width: 60px; /* ラウンド番号の幅を固定 */
+    text-align: right;
+}
+
+.record-entry .record-player-name {
+    font-weight: bold;
+    margin-right: 5px;
+    flex-shrink: 0;
+    width: 60px; /* プレイヤー名の幅を固定 */
+}
+
+.record-entry .record-card-info {
+    flex-grow: 1;
+    font-size: 1em;
+}
+
+.record-entry .record-card-info .card-icon {
+    font-size: 1.2em;
+    margin-right: 5px;
+}
 
 /* レスポンシブデザイン */
 @media (max-width: 705px) {
@@ -392,12 +406,7 @@
         font-size: 2em;
         padding: 20px;
     }
-    .result-screen h2 {
-        font-size: 2.5em;
-    }
-    .result-screen p {
-        font-size: 1.1em;
-    }
+    /* 結果画面のスタイルはcommon.cssに移動しました */
     .skill-button-container {
         bottom: 10px;
         left: 10px;
@@ -412,6 +421,23 @@
     }
     .skill-confirm-description {
         font-size: 1em;
+    }
+    .record-button-container {
+        bottom: 10px;
+        right: 10px;
+    }
+    .record-button {
+        width: 70px;
+        height: 50px;
+        font-size: 0.9em;
+    }
+    .record-entry .record-round,
+    .record-entry .record-player-name {
+        width: 40px; /* 小画面での幅調整 */
+        font-size: 0.9em;
+    }
+    .record-entry .record-card-info {
+        font-size: 0.9em;
     }
 }
 
@@ -433,5 +459,10 @@
     }
     .active-skill-button .skill-icon {
         font-size: 1em;
+    }
+    .record-button {
+        width: 60px;
+        height: 45px;
+        font-size: 0.8em;
     }
 }

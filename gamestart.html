@@ -7,9 +7,13 @@
     <!-- Google Fonts: Cinzel (タイトル用) と Noto Sans JP (本文用) -->
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
     <!-- CSSファイルをリンク -->
+    <link rel="stylesheet" href="common.css"> <!-- 共通スタイルを読み込み -->
     <link rel="stylesheet" href="gamestart.css">
 </head>
 <body>
+    <!-- ポップアップ表示時の背景オーバーレイ -->
+    <div id="overlay" class="overlay"></div>
+
     <div class="game-container" id="gameContainer">
         <!-- ゲーム開始画面 -->
         <div id="startScreen" class="game-screen">

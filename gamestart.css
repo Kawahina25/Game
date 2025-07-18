@@ -8,7 +8,7 @@ body {
     align-items: center;
     justify-content: center;
     background-color: #1a1a1a; /* 暗い背景色 */
-    background-image: url('https://placehold.co/1920x1080/2b2b2b/ffffff/png?text=Dark+Stone+Texture'); /* 石のテクスチャ */
+    background-image: url('https://placehold.co/1920x1080/2b2b2b/2b2b2b'); /* 背景色と文字色を同じにしてテキストを非表示に */
     background-size: cover;
     background-position: center;
     color: #f0f0f0; /* 全体的に明るい文字色 */
@@ -27,7 +27,7 @@ h1, h2, h3, .popup-title {
 
 .game-container {
     background-color: rgba(35, 35, 35, 0.9); /* 半透明の暗い背景 */
-    background-image: url('https://placehold.co/800x600/3a3a3a/3a3a3a/png'); /* テキストのない単色プレースホルダー画像 */
+    background-image: url('https://placehold.co/800x600/3a3a3a/3a3a3a'); /* 背景色と文字色を同じにしてテキストを非表示に */
     background-size: cover;
     background-position: center;
     padding: 25px;
